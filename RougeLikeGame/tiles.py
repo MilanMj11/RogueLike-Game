@@ -14,6 +14,24 @@ class TileMap:
             for col in range(self.width):
                 self.tiles[row][col] = Tile(row, col, "floor")
 
+        # random walls for testing
+        for col in range(5, 10):
+            self.setTile(5, col, "wall")
+            self.setTile(6, col, "wall")
+            self.setTile(7, col, "wall")
+            self.setTile(8, col, "wall")
+            self.setTile(9, col, "wall")
+            self.setTile(10, col, "wall")
+
+        # making the outside full of walls
+        for row in range(self.height):
+            self.setTile(row, 0, "wall")
+            self.setTile(row, self.width - 1, "wall")
+        for col in range(self.width):
+            self.setTile(0, col, "wall")
+            self.setTile(self.height - 1, col, "wall")
+
+
     def setTile(self, row, col, type):
         self.tiles[row][col] = Tile(row, col, type)
 
@@ -36,6 +54,8 @@ class Tile(pygame.sprite.Sprite):
         self.col = col
         self.initImage()
 
+    def getRect(self):
+        return pygame.Rect(self.col * 128, self.row * 128, self.image.get_width(), self.image.get_height())
     def initImage(self):
         image = pygame.image.load("assets/tilemap/" + self.type + ".png").convert_alpha()
         self.setImage(image)
