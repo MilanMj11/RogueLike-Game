@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.image = pygame.image.load("assets/white_pawn.png").convert_alpha()
         self.image.set_colorkey((100, 100, 100))
         self.rect = self.image.get_rect()
-        self.rect.topleft = (0, 0)
+        self.rect.topleft = (500, 500)
 
     def update(self):
         pass
@@ -16,16 +16,16 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def handleInput(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            self.move(self.rect.x, self.rect.y - 5)
+            self.rect.y -= 5
         if keys[pygame.K_s]:
-            self.move(self.rect.x, self.rect.y + 5)
+            self.rect.y += 5
         if keys[pygame.K_a]:
-            self.move(self.rect.x - 5, self.rect.y)
+            self.rect.x -= 5
         if keys[pygame.K_d]:
-            self.move(self.rect.x + 5, self.rect.y)
+            self.rect.x += 5
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect.topleft)
+    def render(self, screen, offset = (0,0)):
+        screen.blit(self.image, (self.rect.x - offset[0], self.rect.y - offset[1]))
 
     def move(self, x, y):
-        self.rect.topleft = (x, y)
+        self.position = (x, y)
