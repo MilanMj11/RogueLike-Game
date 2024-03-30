@@ -50,7 +50,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             length = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
             direction = [direction[0] / length, direction[1] / length]
 
-            projectile = Projectile(self.game, self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2, direction, 10)
+            projectile = Projectile(self.game, self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2,
+                                    direction, 10)
 
             projectile.setImage(self.projectileImage)
             self.game.projectiles.append(projectile)
