@@ -1,7 +1,10 @@
+import math
+import time
 import pygame
 
 import game
 from constants import *
+from projectile import Projectile
 
 NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]
 
@@ -14,6 +17,14 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.size = size
         self.position = list(pos)
         self.game = game
+        self.attackSpeed = PLAYER_ATTACK_SPEED
+        self.initProjectileImage()
+        self.last_call_time = 0
+
+    def initProjectileImage(self):
+        self.projectileImage = pygame.image.load("assets/projectile.png").convert_alpha()
+        self.projectileImage = pygame.transform.scale(self.projectileImage, (32, 32))
+        self.projectileImage.set_colorkey((100, 100, 100))
 
     def getRect(self):
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
@@ -29,7 +40,32 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 tiles.append(self.game.tilemap.getTile(row, col))
         return tiles
 
+    def shootProjectile(self):
+        if pygame.mouse.get_pressed()[0]:
+            mousePos = pygame.mouse.get_pos()
+            # get the direction of the projectile
+            playerPos = SCREEN_WIDTH / 2 + self.size[0] / 2, SCREEN_HEIGHT / 2 + self.size[1] / 2
+
+            direction = [mousePos[0] - playerPos[0], mousePos[1] - playerPos[1]]
+            length = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
+            direction = [direction[0] / length, direction[1] / length]
+
+            projectile = Projectile(self.game, self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2, direction, 10)
+
+            projectile.setImage(self.projectileImage)
+            self.game.projectiles.append(projectile)
+            return True
+        return False
+
     def update(self):
+
+        # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
+
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_call_time >= 1000 / self.attackSpeed:
+            if self.shootProjectile():
+                self.last_call_time = current_time
 
         movement = self.getDirectionInput()
 
@@ -67,13 +103,13 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         movement = [0, 0]
 
         if keys[pygame.K_w]:
-            movement[1] -= 5
+            movement[1] -= PLAYER_SPEED
         if keys[pygame.K_s]:
-            movement[1] += 5
+            movement[1] += PLAYER_SPEED
         if keys[pygame.K_a]:
-            movement[0] -= 5
+            movement[0] -= PLAYER_SPEED
         if keys[pygame.K_d]:
-            movement[0] += 5
+            movement[0] += PLAYER_SPEED
 
         return movement
 

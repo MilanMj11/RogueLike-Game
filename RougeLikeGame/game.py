@@ -7,15 +7,16 @@ from tiles import *
 class GameController:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((1920, 1080))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
         self.camera = [0, 0]
         self.render_camera = [0, 0]
         self.background = pygame.transform.scale(pygame.image.load("assets/background.jpg").convert_alpha(),
-                                                 (1920, 1080))
+                                                 (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.tilemap = None
-        self.player = Player(self, (470, 470))
+        self.player = Player(self, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.projectiles = []
 
     def startGame(self):
         self.tilemap = TileMap(20, 20)
@@ -28,6 +29,9 @@ class GameController:
 
         # self.player.handleInput()
         self.player.update()
+
+        for projectile in self.projectiles:
+            projectile.update()
 
         self.camera[0] += (self.player.position[0] - self.camera[0] - 960) / 10
         self.camera[1] += (self.player.position[1] - self.camera[1] - 540) / 10
@@ -47,6 +51,8 @@ class GameController:
         self.screen.blit(self.background, (0, 0))
         self.tilemap.render(self.screen, offset=self.render_camera)
         self.player.render(self.screen, offset=self.render_camera)
+        for projectile in self.projectiles:
+            projectile.render(self.screen, offset=self.render_camera)
 
         pygame.display.flip()
         pygame.display.update()
