@@ -19,14 +19,15 @@ class Projectile(pygame.sprite.Sprite):
     def getRect(self):
         return pygame.Rect(self.x, self.y, 5, 5)
 
-    def setImage(self, image):
-        self.image = image
+    def setImage(self, image, size=(16, 16)):
+        self.image = pygame.transform.scale(image, size)
+
     def getTilesAround(self):
         tiles = []
         projectileRect = self.getRect()
         for offset in NEIGHBOURS_OFFSET:
-            row = int((projectileRect.y + offset[1]) / 128)
-            col = int((projectileRect.x + offset[0]) / 128)
+            row = int((projectileRect.y + offset[1]) / TILESIZE)
+            col = int((projectileRect.x + offset[0]) / TILESIZE)
             if row >= 0 and row < self.game.tilemap.height and col >= 0 and col < self.game.tilemap.width:
                 tiles.append(self.game.tilemap.getTile(row, col))
         return tiles
@@ -47,4 +48,5 @@ class Projectile(pygame.sprite.Sprite):
 
     def render(self, screen, offset=(0, 0)):
         if self.image != None:
-            screen.blit(self.image, (self.x - offset[0] - self.image.get_size()[0] / 2, self.y - offset[1] - self.image.get_size()[1] / 2))
+            screen.blit(self.image, (
+            self.x - offset[0] - self.image.get_size()[0] / 2, self.y - offset[1] - self.image.get_size()[1] / 2))

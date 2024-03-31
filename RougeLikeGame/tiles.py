@@ -6,10 +6,10 @@ class TileMap:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.tile_size = 128
+        self.tile_size = TILESIZE
         self.tiles = [[None for col in range(width)] for row in range(height)]
 
-    def initTiles(self):
+    def init_Dungeon_1(self):
         for row in range(self.height):
             for col in range(self.width):
                 self.tiles[row][col] = Tile(row, col, "floor")
@@ -55,15 +55,17 @@ class Tile(pygame.sprite.Sprite):
         self.initImage()
 
     def getRect(self):
-        return pygame.Rect(self.col * 128, self.row * 128, self.image.get_width(), self.image.get_height())
+        return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
     def initImage(self):
         image = pygame.image.load("assets/tilemap/" + self.type + ".png").convert_alpha()
+        # scale the image to the tile size
+        image = pygame.transform.scale(image, (TILESIZE, TILESIZE))
         self.setImage(image)
 
     def setImage(self, image):
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.topleft = (self.col * 128, self.row * 128)
+        self.rect.topleft = (self.col * TILESIZE, self.row * TILESIZE)
 
     def render(self, screen, offset=(0, 0)):
         screen.blit(self.image, (self.rect.x - offset[0], self.rect.y - offset[1]))

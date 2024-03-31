@@ -10,7 +10,7 @@ NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1]
 
 
 class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
-    def __init__(self, game, pos, size=(128, 128)):
+    def __init__(self, game, pos, size=(64, 64)):
         super().__init__()
         # Animation frames
         self.animation_frames = [
@@ -28,9 +28,12 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.size = size
         self.position = list(pos)
         self.game = game
+        self.speed = PLAYER_SPEED
         self.attackSpeed = PLAYER_ATTACK_SPEED
         self.initProjectileImage()
         self.last_call_time = 0
+
+        self.projectileSpeed = 4
 
     def update_animation(self, current_time):
         # Update the animation frame
@@ -50,7 +53,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def getTilesAround(self):
         # get the tiles around the player
         tiles = []
-        playerTile = self.game.tilemap.getTile(int(self.position[1] / 128), int(self.position[0] / 128))
+        playerTile = self.game.tilemap.getTile(int(self.position[1] / TILESIZE), int(self.position[0] / TILESIZE))
         for offset in NEIGHBOURS_OFFSET:
             row = playerTile.row + offset[0]
             col = playerTile.col + offset[1]
@@ -69,7 +72,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             direction = [direction[0] / length, direction[1] / length]
 
             projectile = Projectile(self.game, self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2,
-                                    direction, 10)
+                                    direction, self.projectileSpeed)
 
             projectile.setImage(self.projectileImage)
             self.game.projectiles.append(projectile)
@@ -124,13 +127,13 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         movement = [0, 0]
 
         if keys[pygame.K_w]:
-            movement[1] -= PLAYER_SPEED
+            movement[1] -= self.speed
         if keys[pygame.K_s]:
-            movement[1] += PLAYER_SPEED
+            movement[1] += self.speed
         if keys[pygame.K_a]:
-            movement[0] -= PLAYER_SPEED
+            movement[0] -= self.speed
         if keys[pygame.K_d]:
-            movement[0] += PLAYER_SPEED
+            movement[0] += self.speed
 
         return movement
 
