@@ -27,6 +27,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.image.set_colorkey((100, 100, 100))
         self.size = size
         self.position = list(pos)
+        self.facing = "RIGHT"
         self.game = game
         self.speed = PLAYER_SPEED
         self.attackSpeed = PLAYER_ATTACK_SPEED
@@ -82,6 +83,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
     def update(self):
 
+
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
 
         current_time = pygame.time.get_ticks()
@@ -133,10 +135,18 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             movement[1] += self.speed
         if keys[pygame.K_a]:
             movement[0] -= self.speed
+            self.facing = "LEFT"
         if keys[pygame.K_d]:
             movement[0] += self.speed
+            self.facing = "RIGHT"
 
         return movement
 
     def render(self, screen, offset=(0, 0)):
-        screen.blit(self.image, (self.position[0] - offset[0], self.position[1] - offset[1]))
+
+        if self.facing == "LEFT":
+            flippedImage = pygame.transform.flip(self.image, True, False)
+            flippedImage.set_colorkey((100, 100, 100))
+            screen.blit(flippedImage, (self.position[0] - offset[0], self.position[1] - offset[1]))
+        else:
+            screen.blit(self.image, (self.position[0] - offset[0], self.position[1] - offset[1]))

@@ -25,7 +25,7 @@ class GameController:
         # start the game, initially is just a simple tilemap for testing
         self.tilemap = TileMap()
         self.tilemap.init_Lobby()
-        self.player.speed = 10
+        self.player.speed = 4
 
     def updatePlayer(self):
         # update the player
