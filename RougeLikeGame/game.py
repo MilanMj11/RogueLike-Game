@@ -11,20 +11,21 @@ class GameController:
         self.virtual_screen = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.gameStateManager = GameStateManager("Dungeon 1")
+        self.gameStateManager = GameStateManager("Lobby")
         self.running = True
         self.camera = [0, 0]
         self.render_camera = [0, 0]
         self.background = pygame.transform.scale(pygame.image.load("assets/background.jpg").convert_alpha(),
                                                  (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.tilemap = None
-        self.player = Player(self, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.player = Player(self, (9 * TILESIZE, 8 * TILESIZE))
         self.projectiles = []
 
     def startGame(self):
         # start the game, initially is just a simple tilemap for testing
-        self.tilemap = TileMap(20, 20)
-        self.tilemap.init_Dungeon_1()
+        self.tilemap = TileMap()
+        self.tilemap.init_Lobby()
+        self.player.speed = 10
 
     def updatePlayer(self):
         # update the player
@@ -48,6 +49,10 @@ class GameController:
         self.updateProjectiles()
         self.updateCamera()
 
+    def updateLobby(self):
+        self.updatePlayer()
+        self.updateCamera()
+
     def update(self):
         if self.running == False:
             pygame.quit()
@@ -55,6 +60,9 @@ class GameController:
 
         if self.gameStateManager.gameState == "Dungeon 1":
             self.updateDungeon1()
+
+        if self.gameStateManager.gameState == "Lobby":
+            self.updateLobby()
 
         self.clock.tick(60)
         self.checkGameEvents()
@@ -73,9 +81,22 @@ class GameController:
         for projectile in self.projectiles:
             projectile.render(self.virtual_screen, offset=self.render_camera)
 
+    def renderLobby(self):
+        self.virtual_screen.blit(self.background, (0, 0))
+        self.tilemap.render(self.virtual_screen, offset=self.render_camera)
+        self.player.render(self.virtual_screen, offset=self.render_camera)
+
     def render(self):
+
+        # --- Rendering the correct Scene based on the gameState ---
+
         if self.gameStateManager.gameState == "Dungeon 1":
             self.renderDungeon1()
+
+        if self.gameStateManager.gameState == "Lobby":
+            self.renderLobby()
+
+        # --- Rendering the correct Scene based on the gameState ---
 
         # scale the virutal screen onto the actual screen
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH, SCREEN_HEIGHT), self.screen)

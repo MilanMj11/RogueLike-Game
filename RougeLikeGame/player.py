@@ -64,8 +64,9 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def shootProjectile(self):
         if pygame.mouse.get_pressed()[0]:
             mousePos = pygame.mouse.get_pos()
+
             # get the direction of the projectile
-            playerPos = SCREEN_WIDTH / 2 + self.size[0] / 2, SCREEN_HEIGHT / 2 + self.size[1] / 2
+            playerPos = SCREEN_WIDTH / 2 + self.size[0], SCREEN_HEIGHT / 2 + self.size[1]
 
             direction = [mousePos[0] - playerPos[0], mousePos[1] - playerPos[1]]
             length = math.sqrt(direction[0] ** 2 + direction[1] ** 2)

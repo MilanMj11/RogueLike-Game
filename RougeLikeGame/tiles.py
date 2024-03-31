@@ -3,13 +3,96 @@ from constants import *
 
 
 class TileMap:
-    def __init__(self, width, height):
+    def __init__(self, width = 10, height = 10):
         self.width = width
         self.height = height
         self.tile_size = TILESIZE
-        self.tiles = [[None for col in range(width)] for row in range(height)]
+        self.tiles = []
+
+    def init_Lobby(self):
+        self.width = 33
+        self.height = 18
+
+        self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
+
+        for row in range(self.height):
+            for col in range(self.width):
+                self.tiles[row][col] = Tile(row, col, "floor")
+
+        # Personal Room
+        for j in range(5,10):
+            self.setTile(0,j,"wall")
+        for i in range(1,6):
+            self.setTile(i,4,"wall")
+            self.setTile(i,10,"wall")
+        self.setTile(6,5,"wall")
+        self.setTile(6,6,"wall")
+        self.setTile(6,8,"wall")
+        self.setTile(6,9,"wall")
+
+        # Hallway
+        for j in range(10,17):
+            self.setTile(6,j,"wall")
+        for j in range(9,25):
+            if j == 15 or j == 16 or j == 17:
+                continue
+            self.setTile(10,j,"wall")
+        self.setTile(10,5,"wall")
+        for i in range(7,10):
+            self.setTile(i,4,"wall")
+        for j in range(22,25):
+            self.setTile(6,j,"wall")
+
+        # Gable Room
+        for j in range(1,5):
+            self.setTile(11,j,"wall")
+        for i in range(12,17):
+            self.setTile(i,0,"wall")
+        for j in range(1,24):
+            self.setTile(17,j,"wall")
+        for j in range(10,14):
+            self.setTile(11,j,"wall")
+        for i in range(12,17):
+            self.setTile(i,12,"wall")
+
+        # Black Smith
+        for i in range(12,17):
+            self.setTile(i,13,"wall")
+        for i in range(11,17):
+            self.setTile(i,24,"wall")
+
+        # Shop
+        for i in range(1,7):
+            self.setTile(i,13,"wall")
+        for i in range(1,7):
+            self.setTile(i,24,"wall")
+        for j in range(14,24):
+            self.setTile(0,j,"wall")
+
+        # Dungeon Entrance
+        self.setTile(5,25,"wall")
+        for j in range(26,29):
+            self.setTile(4,j,"wall")
+        self.setTile(5,29,"wall")
+        self.setTile(11,25,"wall")
+        for j in range(26,29):
+            self.setTile(12,j,"wall")
+        self.setTile(11,29,"wall")
+        self.setTile(6,30,"wall")
+        self.setTile(6,31,"wall")
+        self.setTile(10,30,"wall")
+        self.setTile(10,31,"wall")
+        for i in range(7,10):
+            self.setTile(i,32,"wall")
+
 
     def init_Dungeon_1(self):
+
+        self.height = 20
+        self.width = 20
+
+        self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
+
         for row in range(self.height):
             for col in range(self.width):
                 self.tiles[row][col] = Tile(row, col, "floor")
