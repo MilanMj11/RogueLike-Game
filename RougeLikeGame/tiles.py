@@ -85,6 +85,43 @@ class TileMap:
         for i in range(7,10):
             self.setTile(i,32,"wall")
 
+        # making the outside full of BLANK
+        for i in range(11):
+            for j in range(4):
+                self.setTile(i,j,"BLANK")
+        self.setTile(6,4,"BLANK")
+        self.setTile(10,4,"BLANK")
+        self.setTile(11,0,"BLANK")
+        self.setTile(17,0,"BLANK")
+        self.setTile(0,4,"BLANK")
+        for j in range(10,14):
+            self.setTile(0,j,"BLANK")
+        for i in range(1,6):
+            self.setTile(i,11,"BLANK")
+            self.setTile(i,12,"BLANK")
+
+        for i in range(4):
+            for j in range(25,33):
+                self.setTile(i,j,"BLANK")
+                self.setTile(17-i,j,"BLANK")
+        self.setTile(0,24,"BLANK")
+        self.setTile(4,25,"BLANK")
+        for j in range(29,33):
+            self.setTile(4,j,"BLANK")
+        for j in range(30,33):
+            self.setTile(5,j,"BLANK")
+        self.setTile(6,32,"BLANK")
+
+        for j in range(25,33):
+            self.setTile(13,j,"BLANK")
+        self.setTile(17,24,"BLANK")
+        self.setTile(12,25,"BLANK")
+        for j in range(29,33):
+            self.setTile(12,j,"BLANK")
+        for j in range(30,33):
+            self.setTile(11,j,"BLANK")
+        self.setTile(10,32,"BLANK")
+
 
     def init_Dungeon_1(self):
 
@@ -140,6 +177,11 @@ class Tile(pygame.sprite.Sprite):
     def getRect(self):
         return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
     def initImage(self):
+        if self.type == "BLANK":
+            image = pygame.Surface((TILESIZE, TILESIZE))
+            image.fill((0, 0, 0))
+            self.setImage(image)
+            return
         image = pygame.image.load("assets/tilemap/" + self.type + ".png").convert_alpha()
         # scale the image to the tile size
         image = pygame.transform.scale(image, (TILESIZE, TILESIZE))
