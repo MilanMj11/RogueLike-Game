@@ -12,7 +12,18 @@ NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1]
 class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def __init__(self, game, pos, size=(128, 128)):
         super().__init__()
-        self.image = pygame.image.load("assets/white_pawn.png").convert_alpha()
+        # Animation frames
+        self.animation_frames = [
+            pygame.transform.scale(pygame.image.load("assets/player/frame_1.png").convert_alpha(), size),
+            pygame.transform.scale(pygame.image.load("assets/player/frame_2.png").convert_alpha(), size),
+            pygame.transform.scale(pygame.image.load("assets/player/frame_3.png").convert_alpha(), size)
+        ]
+        # Animation variables
+        self.current_frame = 0
+        self.frame_delay = 350
+        self.last_frame_time = 0
+
+        self.image = self.animation_frames[self.current_frame]
         self.image.set_colorkey((100, 100, 100))
         self.size = size
         self.position = list(pos)
@@ -20,6 +31,13 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.attackSpeed = PLAYER_ATTACK_SPEED
         self.initProjectileImage()
         self.last_call_time = 0
+
+    def update_animation(self, current_time):
+        # Update the animation frame
+        if current_time - self.last_frame_time > self.frame_delay:
+            self.current_frame = (self.current_frame + 1) % len(self.animation_frames)
+            self.image = self.animation_frames[self.current_frame]
+            self.last_frame_time = current_time
 
     def initProjectileImage(self):
         self.projectileImage = pygame.image.load("assets/projectile.png").convert_alpha()
@@ -69,6 +87,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 self.last_call_time = current_time
 
         movement = self.getDirectionInput()
+
+        self.update_animation(current_time)
 
         # check collisions with walls
         self.position[0] += movement[0]
