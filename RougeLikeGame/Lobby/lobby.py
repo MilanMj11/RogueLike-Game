@@ -12,6 +12,7 @@ class Lobby:
     def init_Lobby(self):
         self.game.tilemap = TileMap()
         self.game.tilemap.init_Tilemap_Lobby()
+        self.game.player.position = [9 * TILESIZE, 8 * TILESIZE]
         self.game.player.speed = 12
 
     def checkLobbyGameEvents(self, eventList):

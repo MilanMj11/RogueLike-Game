@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from lobbyPreset import *
+from Lobby.lobbyPreset import *
 
 class TileMap:
     def __init__(self, width = 10, height = 10):

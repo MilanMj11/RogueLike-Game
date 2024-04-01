@@ -1,9 +1,8 @@
-import pygame
-from constants import *
 from player import Player
 from tiles import *
 from gameStateManager import GameStateManager
-from lobby import Lobby
+from Lobby.lobby import Lobby
+from Dungeons.dungeon1 import Dungeon1
 
 class GameController:
     def __init__(self):
@@ -20,20 +19,21 @@ class GameController:
         self.tilemap = None
         self.player = Player(self, (9 * TILESIZE, 8 * TILESIZE))
         self.projectiles = []
-        self.Lobby = Lobby(self)
+        # Scenes
+        self.Lobby = None
+        self.Dungeon1 = None
 
     def startGame(self):
-        # start the game, initially is just a simple tilemap for testing
-        # self.tilemap = TileMap()
-        # self.tilemap.init_Lobby()
-        # self.player.speed = 10
+        # load the lobby as the first scene
+        self.loadLobby()
+
+    def loadLobby(self):
+        self.Lobby = Lobby(self)
         self.Lobby.init_Lobby()
 
     def loadDungeon1(self):
-        self.tilemap = TileMap()
-        self.tilemap.init_Tilemap_Dungeon_1()
-        self.player.position = [5 * TILESIZE, 5 * TILESIZE]
-        self.player.speed = 5
+        self.Dungeon1 = Dungeon1(self)
+        self.Dungeon1.init_Dungeon_1()
 
     def updatePlayer(self):
         # update the player
@@ -46,16 +46,11 @@ class GameController:
 
     def updateCamera(self):
         # camera follows the player with a smooth effect , MIGHT CHANGE VALUES LATER
-        self.camera[0] += (self.player.position[0] - self.camera[0] - VIRTUALSCREEN_WIDTH / 2 + self.player.size[0] / 2) / 10
-        self.camera[1] += (self.player.position[1] - self.camera[1] - VIRTUALSCREEN_HEIGHT / 2 + self.player.size[1] / 2) / 10
+        self.camera[0] += (self.player.position[0] - self.camera[0] - VIRTUALSCREEN_WIDTH / 2 + self.player.size[
+            0] / 2) / 10
+        self.camera[1] += (self.player.position[1] - self.camera[1] - VIRTUALSCREEN_HEIGHT / 2 + self.player.size[
+            1] / 2) / 10
         self.render_camera = [int(self.camera[0]), int(self.camera[1])]
-
-
-    def updateDungeon1(self):
-        # update everything needed for the dungeon 1
-        self.updatePlayer()
-        self.updateProjectiles()
-        self.updateCamera()
 
     def update(self):
         if self.running == False:
@@ -63,7 +58,7 @@ class GameController:
             quit()
 
         if self.gameStateManager.gameState == "Dungeon 1":
-            self.updateDungeon1()
+            self.Dungeon1.updateDungeon1()
 
         if self.gameStateManager.gameState == "Lobby":
             self.Lobby.updateLobby()
@@ -79,25 +74,19 @@ class GameController:
         if self.gameStateManager.gameState == "Lobby":
             self.Lobby.checkLobbyGameEvents(eventList)
 
+        if self.gameStateManager.gameState == "Dungeon 1":
+            self.Dungeon1.checkDungeon1GameEvents(eventList)
+
         for event in eventList:
             if event.type == pygame.QUIT:
                 self.running = False
-
-
-    def renderDungeon1(self):
-        # render everything needed for the dungeon 1
-        self.virtual_screen.blit(self.background, (0, 0))
-        self.tilemap.render(self.virtual_screen, offset=self.render_camera)
-        self.player.render(self.virtual_screen, offset=self.render_camera)
-        for projectile in self.projectiles:
-            projectile.render(self.virtual_screen, offset=self.render_camera)
 
     def render(self):
 
         # --- Rendering the correct Scene based on the gameState ---
 
         if self.gameStateManager.gameState == "Dungeon 1":
-            self.renderDungeon1()
+            self.Dungeon1.renderDungeon1()
 
         if self.gameStateManager.gameState == "Lobby":
             self.Lobby.renderLobby()
