@@ -36,6 +36,10 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
         self.projectileSpeed = 4
 
+    def getTile(self):
+        return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
+                                         int((self.position[0] + self.size[0] / 2) / TILESIZE))
+
     def update_animation(self, current_time):
         # Update the animation frame
         if current_time - self.last_frame_time > self.frame_delay:
@@ -69,7 +73,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             # get the direction of the projectile
             playerPos = SCREEN_WIDTH / 2 + self.size[0], SCREEN_HEIGHT / 2 + self.size[1]
 
-            direction = [mousePos[0] - playerPos[0], mousePos[1] - playerPos[1]]
+            direction = [mousePos[0] - playerPos[0] + self.size[0], mousePos[1] - playerPos[1] + self.size[1]]
             length = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
             direction = [direction[0] / length, direction[1] / length]
 
@@ -83,14 +87,14 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
     def update(self):
 
-
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
 
         current_time = pygame.time.get_ticks()
 
-        if current_time - self.last_call_time >= 1000 / self.attackSpeed:
-            if self.shootProjectile():
-                self.last_call_time = current_time
+        if self.game.gameStateManager.gameState != "Lobby":
+            if current_time - self.last_call_time >= 1000 / self.attackSpeed:
+                if self.shootProjectile():
+                    self.last_call_time = current_time
 
         movement = self.getDirectionInput()
 

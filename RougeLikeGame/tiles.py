@@ -9,7 +9,7 @@ class TileMap:
         self.tile_size = TILESIZE
         self.tiles = []
 
-    def init_Lobby(self):
+    def init_Tilemap_Lobby(self):
         self.width = 33
         self.height = 18
 
@@ -24,25 +24,16 @@ class TileMap:
         for coords in LOBBY_BLANKS:
             self.setTile(coords[0], coords[1], "BLANK")
 
-    def init_Dungeon_1(self):
+    def init_Tilemap_Dungeon_1(self):
 
-        self.height = 20
-        self.width = 20
+        self.height = 10
+        self.width = 10
 
         self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
 
         for row in range(self.height):
             for col in range(self.width):
                 self.tiles[row][col] = Tile(row, col, "floor")
-
-        # random walls for testing
-        for col in range(5, 10):
-            self.setTile(5, col, "wall")
-            self.setTile(6, col, "wall")
-            self.setTile(7, col, "wall")
-            self.setTile(8, col, "wall")
-            self.setTile(9, col, "wall")
-            self.setTile(10, col, "wall")
 
         # making the outside full of walls
         for row in range(self.height):
