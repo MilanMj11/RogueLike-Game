@@ -29,16 +29,21 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.position = list(pos)
         self.facing = "RIGHT"
         self.game = game
+        self.health = PLAYER_HEALTH
         self.speed = PLAYER_SPEED
         self.attackSpeed = PLAYER_ATTACK_SPEED
         self.initProjectileImage()
-        self.last_call_time = 0
+        self.last_projectile_time = 0
 
         self.projectileSpeed = 4
+        self.projectileDamage = 10
 
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
                                          int((self.position[0] + self.size[0] / 2) / TILESIZE))
+
+    def getRectMiddlePoint(self):
+        return (self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2)
 
     def update_animation(self, current_time):
         # Update the animation frame
@@ -78,7 +83,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             direction = [direction[0] / length, direction[1] / length]
 
             projectile = Projectile(self.game, self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2,
-                                    direction, self.projectileSpeed)
+                                    direction, self.projectileSpeed, self.projectileDamage)
 
             projectile.setImage(self.projectileImage)
             self.game.projectiles.append(projectile)
@@ -87,14 +92,16 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
     def update(self):
 
+        print(self.health)
+
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
 
         current_time = pygame.time.get_ticks()
 
         if self.game.gameStateManager.gameState != "Lobby":
-            if current_time - self.last_call_time >= 1000 / self.attackSpeed:
+            if current_time - self.last_projectile_time >= 1000 / self.attackSpeed:
                 if self.shootProjectile():
-                    self.last_call_time = current_time
+                    self.last_projectile_time = current_time
 
         movement = self.getDirectionInput()
 

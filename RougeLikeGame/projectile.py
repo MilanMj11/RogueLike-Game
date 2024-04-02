@@ -7,7 +7,7 @@ NEIGHBOURS_OFFSET = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, direction, velocity):
+    def __init__(self, game, x, y, direction, velocity, damage = 10):
         super().__init__()
         self.x = x
         self.y = y
@@ -15,6 +15,7 @@ class Projectile(pygame.sprite.Sprite):
         self.direction = direction
         self.game = game
         self.image = None
+        self.damage = damage
 
     def getRect(self):
         return pygame.Rect(self.x, self.y, 5, 5)

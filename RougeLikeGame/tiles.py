@@ -43,6 +43,17 @@ class TileMap:
             self.setTile(0, col, "wall")
             self.setTile(self.height - 1, col, "wall")
 
+        self.setTile(3, 4, "wall")
+        self.setTile(3, 5, "wall")
+
+        self.setTile(2, 7, "wall")
+        self.setTile(3, 7, "wall")
+
+        self.setTile(6, 2, "wall")
+        self.setTile(6, 3, "wall")
+        self.setTile(7, 2, "wall")
+        self.setTile(7, 3, "wall")
+
 
     def setTile(self, row, col, type):
         self.tiles[row][col] = Tile(row, col, type)
