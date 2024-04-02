@@ -30,10 +30,12 @@ class GameController:
     def loadLobby(self):
         self.Lobby = Lobby(self)
         self.Lobby.init_Lobby()
+        self.player.health = PLAYER_HEALTH
 
     def loadDungeon1(self):
         self.Dungeon1 = Dungeon1(self)
         self.Dungeon1.init_Dungeon_1()
+        self.player.health = PLAYER_HEALTH
 
     def updatePlayer(self):
         # update the player
@@ -53,6 +55,7 @@ class GameController:
         self.render_camera = [int(self.camera[0]), int(self.camera[1])]
 
     def update(self):
+
         if self.running == False:
             pygame.quit()
             quit()

@@ -92,8 +92,6 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
     def update(self):
 
-        print(self.health)
-
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
 
         current_time = pygame.time.get_ticks()

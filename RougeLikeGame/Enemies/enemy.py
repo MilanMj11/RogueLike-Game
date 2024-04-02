@@ -12,6 +12,7 @@ class Enemy(pygame.sprite.Sprite):
         self.attackSpeed = ENEMY_ATTACK_SPEED
 
         self.image = None
+        self.facing = "LEFT"
 
     def getTilesAround(self):
         # get the tiles around the enemy
@@ -39,4 +40,8 @@ class Enemy(pygame.sprite.Sprite):
 
     def render(self, screen, offset=(0, 0)):
         if self.image != None:
-            screen.blit(self.image, (self.position[0] - offset[0], self.position[1] - offset[1]))
+            if self.facing == "RIGHT":
+                flippedImage = pygame.transform.flip(self.image, True, False)
+                screen.blit(flippedImage, (self.position[0] - offset[0], self.position[1] - offset[1]))
+            else:
+                screen.blit(self.image, (self.position[0] - offset[0], self.position[1] - offset[1]))

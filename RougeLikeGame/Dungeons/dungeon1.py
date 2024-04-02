@@ -9,8 +9,8 @@ class Dungeon1:
     def __init__(self, game):
         self.game = game
         self.init_Dungeon_1()
-        self.enemiesList = []
-        self.lastEnemySpawn = 0
+        self.game.enemiesList = []
+        self.game.lastSkeletonFighterSpawn = 0
 
     def init_Dungeon_1(self):
         self.game.tilemap = TileMap()
@@ -28,19 +28,33 @@ class Dungeon1:
 
     def spawnSkeletonFighter(self):
         current_time = pygame.time.get_ticks()
-        if current_time - self.lastEnemySpawn > 5000:
-            self.lastEnemySpawn = current_time
-            self.enemiesList.append(SkeletonFighter(self.game, [7 * TILESIZE, 7 * TILESIZE]))
+        if self.game.lastSkeletonFighterSpawn == 0:
+            if current_time > 8000:
+                self.game.lastSkeletonFighterSpawn = current_time
+
+        if current_time - self.game.lastSkeletonFighterSpawn > 5000:
+            self.game.lastSkeletonFighterSpawn = current_time
+            self.game.enemiesList.append(SkeletonFighter(self.game, [7 * TILESIZE, 7 * TILESIZE]))
 
     def updateDungeon1(self):
+
         self.game.updatePlayer()
         self.game.updateProjectiles()
         self.game.updateCamera()
 
+        # check if player died
+        if self.game.player.health <= 0:
+            self.game.gameStateManager.switchGameState("Lobby")
+            self.game.loadLobby()
+            return
+
         # spawn enemies
         self.spawnSkeletonFighter()
 
-        for enemy in self.enemiesList:
+        for enemy in self.game.enemiesList:
+            if enemy.health <= 0:
+                self.game.enemiesList.remove(enemy)
+                continue
             enemy.update()
 
 
@@ -51,5 +65,5 @@ class Dungeon1:
         for projectile in self.game.projectiles:
             projectile.render(self.game.virtual_screen, offset=self.game.render_camera)
 
-        for enemy in self.enemiesList:
+        for enemy in self.game.enemiesList:
             enemy.render(self.game.virtual_screen, offset=self.game.render_camera)
