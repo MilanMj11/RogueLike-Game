@@ -16,7 +16,7 @@ class Dungeon1:
         self.game.tilemap = TileMap()
         self.game.tilemap.init_Tilemap_Dungeon_1()
         self.game.player.position = [5 * TILESIZE, 5 * TILESIZE]
-        self.game.player.speed = 6
+        self.game.player.speed = 3
 
     def checkDungeon1GameEvents(self, eventList):
         for event in eventList:
@@ -27,10 +27,8 @@ class Dungeon1:
                         self.game.loadLobby()
 
     def spawnSkeletonFighter(self):
+
         current_time = pygame.time.get_ticks()
-        if self.game.lastSkeletonFighterSpawn == 0:
-            if current_time > 8000:
-                self.game.lastSkeletonFighterSpawn = current_time
 
         if current_time - self.game.lastSkeletonFighterSpawn > 5000:
             self.game.lastSkeletonFighterSpawn = current_time
@@ -48,14 +46,19 @@ class Dungeon1:
             self.game.loadLobby()
             return
 
-        # spawn enemies
-        self.spawnSkeletonFighter()
-
         for enemy in self.game.enemiesList:
             if enemy.health <= 0:
                 self.game.enemiesList.remove(enemy)
                 continue
             enemy.update()
+
+        # spawn enemies ( up to 5 )
+        if self.game.enemiesList.__len__() < 5:
+            pass
+            # self.spawnSkeletonFighter()
+
+
+
 
 
     def renderDungeon1(self):

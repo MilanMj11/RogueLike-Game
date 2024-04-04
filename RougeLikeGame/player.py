@@ -149,6 +149,10 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             movement[0] += self.speed
             self.facing = "RIGHT"
 
+        if movement[0] != 0 and movement[1] != 0:
+            movement[0] *= 0.7071
+            movement[1] *= 0.7071
+
         return movement
 
     def render(self, screen, offset=(0, 0)):

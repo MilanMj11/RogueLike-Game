@@ -1,13 +1,27 @@
+import random
+
 import pygame
 from constants import *
 from Lobby.lobbyPreset import *
 
+DirectionOFFSET4 = [[0, -1], [0, 1], [-1, 0], [1, 0]]
+
+
 class TileMap:
-    def __init__(self, width = 10, height = 10):
+    def __init__(self, width=10, height=10):
         self.width = width
         self.height = height
         self.tile_size = TILESIZE
         self.tiles = []
+        self.last_randomSet_tile_ind = 0
+
+    def interior(self, row, col):
+        return row >= 0 and row < self.height and col >= 0 and col < self.width
+
+    def getType(self, row, col):
+        if self.interior(row, col) and self.tiles[row][col] != None:
+            return self.tiles[row][col].type
+        return None
 
     def init_Tilemap_Lobby(self):
         self.width = 33
@@ -24,10 +38,12 @@ class TileMap:
         for coords in LOBBY_BLANKS:
             self.setTile(coords[0], coords[1], "BLANK")
 
+        self.stylize_map()
+
     def init_Tilemap_Dungeon_1(self):
 
-        self.height = 10
-        self.width = 10
+        self.height = 20
+        self.width = 20
 
         self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
 
@@ -35,7 +51,7 @@ class TileMap:
             for col in range(self.width):
                 self.tiles[row][col] = Tile(row, col, "floor")
 
-        # making the outside full of walls
+        # making the outside full of 2-layer walls
         for row in range(self.height):
             self.setTile(row, 0, "wall")
             self.setTile(row, self.width - 1, "wall")
@@ -43,17 +59,154 @@ class TileMap:
             self.setTile(0, col, "wall")
             self.setTile(self.height - 1, col, "wall")
 
-        self.setTile(3, 4, "wall")
-        self.setTile(3, 5, "wall")
+        # making the inside walls
+        for row in range(1, self.height - 1):
+            self.setTile(row, 1, "wall")
+            self.setTile(row, self.width - 2, "wall")
+        for col in range(1, self.width - 1):
+            self.setTile(1, col, "wall")
+            self.setTile(self.height - 2, col, "wall")
 
-        self.setTile(2, 7, "wall")
-        self.setTile(3, 7, "wall")
+        for i in range(4):
+            for j in range(7):
+                self.setTile(5 + i, 5 + j, "wall")
 
-        self.setTile(6, 2, "wall")
-        self.setTile(6, 3, "wall")
-        self.setTile(7, 2, "wall")
-        self.setTile(7, 3, "wall")
 
+        for i in range(5):
+            for j in range(5):
+                self.setTile(9 + i, 9 + j, "wall")
+
+        self.stylize_map()
+
+    def setCorrectAssetPosition(self, row, col):
+        tile = self.getTile(row, col)
+        if tile != None:
+            if tile.type == "floor":
+
+                tile.assetPosition = [0, 4]
+
+                if self.tiles[row - 1][col] != None and self.tiles[row - 1][col].type == "wall":
+                    tile.assetPosition = [2, 4]
+
+                if self.tiles[row][col - 1] != None and self.tiles[row][col - 1].type == "wall":
+                    if tile.assetPosition == [2, 4]:
+                        tile.assetPosition = [4, 4]
+                        tile.rotation = 90
+                    else:
+                        tile.assetPosition = [2, 4]
+                        tile.rotation = 90
+
+                # if tile is surrounded by floors
+                if self.tiles[row - 1][col] != None and self.tiles[row - 1][col].type == "floor" and \
+                        self.tiles[row + 1][col] != None and self.tiles[row + 1][col].type == "floor" and \
+                        self.tiles[row][col - 1] != None and self.tiles[row][col - 1].type == "floor" and \
+                        self.tiles[row][col + 1] != None and self.tiles[row][col + 1].type == "floor":
+                    self.last_randomSet_tile_ind += 1
+                    if self.last_randomSet_tile_ind % 10 == 0:
+                        tile.assetPosition = [1, 4]
+
+
+            elif tile.type == "wall":
+
+                tile.assetPosition = [4, 3]
+
+                neighbors = 0
+
+                # if wall is surrounded by walls
+                for offset in NEIGHBOURS_OFFSET:
+                    row_offset = row + offset[0]
+                    col_offset = col + offset[1]
+                    if self.interior(row_offset, col_offset) == False:
+                        neighbors += 1
+                    if self.interior(row_offset, col_offset):
+                        if self.getTile(row_offset, col_offset) != None and self.getTile(row_offset,
+                                                                                         col_offset).type == "wall":
+                            neighbors += 1
+
+                if self.getType(row, col + 1) == "floor":
+                    # Left wall
+                    tile.assetPosition = [1, 1]
+
+                if self.getType(row, col - 1) == "floor":
+                    # Right wall
+                    tile.assetPosition = [3, 1]
+
+                if self.getType(row + 1, col) == "floor":
+                    # Top wall
+                    tile.assetPosition = [4, 3]
+                    if self.getType(row, col - 1) == "floor":
+                        tile.assetPosition = [9, 4]
+                    if self.getType(row, col + 1) == "floor":
+                        tile.assetPosition = [11, 4]
+
+                if self.getType(row - 1, col) == "floor":
+                    # Bottom wall
+                    tile.assetPosition = [2, 2]
+                    if self.getType(row, col - 1) == "floor":
+                        tile.assetPosition = [4, 0]
+                    if self.getType(row, col + 1) == "floor":
+                        tile.assetPosition = [5, 0]
+
+                if self.getType(row - 1, col) == "wall":
+                    if self.getType(row + 1, col) == "wall":
+                        if self.getType(row + 2, col) == "floor":
+                            if tile.assetPosition == [3, 1]:
+                                tile.assetPosition = [4, 1]
+                            if tile.assetPosition == [1, 1]:
+                                tile.assetPosition = [5, 1]
+                            if tile.assetPosition == [4, 3]:
+                                tile.assetPosition = [2, 0]
+
+                        #tile.assetPosition = [2, 0]
+
+
+                if tile.assetPosition == [4, 3]:
+                    if self.getType(row + 1, col) == "wall":
+                        if self.getType(row + 2, col) == "floor":
+                            tile.assetPosition = [2, 0]
+                    if neighbors == 8:
+                        if self.getType(row + 1, col + 1) == "floor":
+                            tile.assetPosition = [1, 1]
+
+                        if self.getType(row + 1, col - 1) == "floor":
+                            tile.assetPosition = [3, 1]
+
+                        if self.getType(row - 1, col + 1) == "floor":
+                            tile.assetPosition = [1, 2]
+
+                        if self.getType(row - 1, col - 1) == "floor":
+                            tile.assetPosition = [3, 2]
+
+
+                    if self.getType(row, col + 1) == "wall":
+                        if self.getType(row + 1, col + 1) == "wall":
+                            if self.getType(row + 2, col + 1) == "floor":
+                                if self.getType(row + 2, col) != "floor":
+                                    tile.assetPosition = [1, 0]
+
+                    if self.getType(row, col - 1) == "wall":
+                        if self.getType(row + 1, col - 1) == "wall":
+                            if self.getType(row + 2, col - 1) == "floor":
+                                if self.getType(row + 2, col) != "floor":
+                                    tile.assetPosition = [3, 0]
+
+
+                if tile.assetPosition != [4, 3]:
+                    tile.initImage()
+                    return
+
+                if neighbors == 9:
+                    tile.assetPosition = [0, 0]
+                    tile.initImage()
+                    return
+
+
+        tile.initImage()
+
+    def stylize_map(self):
+        for row in range(self.height):
+            for col in range(self.width):
+                self.setCorrectAssetPosition(row, col)
 
     def setTile(self, row, col, type):
         self.tiles[row][col] = Tile(row, col, type)
@@ -75,19 +228,26 @@ class Tile(pygame.sprite.Sprite):
         self.type = type
         self.row = row
         self.col = col
+        self.assetPosition = [0, 0]
+        self.rotation = 0
         self.initImage()
 
     def getRect(self):
         return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
+
     def initImage(self):
         if self.type == "BLANK":
             image = pygame.Surface((TILESIZE, TILESIZE))
             image.fill((0, 0, 0))
             self.setImage(image)
             return
-        image = pygame.image.load("assets/tilemap/" + self.type + ".png").convert_alpha()
+
+        tile_surface = (pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()).subsurface(
+            pygame.Rect(self.assetPosition[0] * 16, self.assetPosition[1] * 16, 16, 16))
+        image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))  # .transform.scale((TILESIZE, TILESIZE))
+        image = pygame.transform.rotate(image, self.rotation)
         # scale the image to the tile size
-        image = pygame.transform.scale(image, (TILESIZE, TILESIZE))
+        # image = pygame.transform.scale(image, (TILESIZE, TILESIZE))
         self.setImage(image)
 
     def setImage(self, image):
