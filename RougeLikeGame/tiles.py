@@ -12,7 +12,7 @@ class TileMap:
         self.width = width
         self.height = height
         self.tile_size = TILESIZE
-        self.tiles = []
+        self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
         self.last_randomSet_tile_ind = 0
 
     def interior(self, row, col):

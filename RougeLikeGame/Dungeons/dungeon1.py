@@ -16,7 +16,7 @@ class Dungeon1:
         self.game.tilemap = TileMap()
         self.game.tilemap.init_Tilemap_Dungeon_1()
         self.game.player.position = [5 * TILESIZE, 5 * TILESIZE]
-        self.game.player.speed = 3
+        self.game.player.speed = 5
 
     def checkDungeon1GameEvents(self, eventList):
         for event in eventList:
