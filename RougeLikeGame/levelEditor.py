@@ -12,13 +12,13 @@ class LevelEditor:
         pygame.init()
 
         self.tilemapAssetsScreen = pygame.Surface((576, 528))
-        self.virtual_screen = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
+        self.virtual_screen = pygame.Surface((1920, 1080))
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.camera = [0, 0]
         self.render_camera = [0, 0]
         self.running = True
-        self.tilemap = TileMap(50, 50)
+        self.tilemap = TileMap(150, 150)
         self.movement = [False, False, False, False]
 
         self.clicking = False
@@ -27,6 +27,7 @@ class LevelEditor:
         self.ongrid = False
 
         self.selectedImage = None
+        self.selectedTileType = None
 
     def updateCamera(self):
 
@@ -48,8 +49,8 @@ class LevelEditor:
         if mouse_pos[0] > 10 and mouse_pos[0] < 10 + SCREEN_WIDTH * 2 // 3  and mouse_pos[1] > 130 and mouse_pos[1] < 130 + SCREEN_HEIGHT * 2 // 3:
             self.ongrid = True
             # get the tile that the mouse is on
-            row = (mouse_pos[1] - 130) // TILESIZE
-            col = (mouse_pos[0] - 10) // TILESIZE
+            row = int((mouse_pos[1] - 130 + self.render_camera[1]) / 42.6)
+            col = int((mouse_pos[0] - 10 + self.render_camera[0]) / 42.6)
             print("OK")
         else:
             self.ongrid = False
@@ -57,6 +58,21 @@ class LevelEditor:
         if self.ongrid == False and self.selectedImage != None:
             mouse_pos = pygame.mouse.get_pos()
             self.screen.blit(self.selectedImage, mouse_pos)
+
+        if self.ongrid == True and self.selectedImage != None:
+            if self.clicking:
+                if self.selectedTileType == "wall":
+                    self.tilemap.setTile(row, col,"wall")
+                    self.tilemap.setTileImage(row, col, self.selectedImage)
+                if self.selectedTileType == "floor":
+                    self.tilemap.setTile(row, col, "floor")
+                    self.tilemap.setTileImage(row, col, self.selectedImage)
+
+                if self.selectedTileType == None and self.tilemap.getTile(row, col) != None:
+                    self.tilemap.setTileImage(row, col, self.selectedImage)
+
+            if self.right_clicking:
+                self.tilemap.delTile(row, col)
 
         self.clock.tick(60)
 
@@ -67,6 +83,20 @@ class LevelEditor:
         for event in eventList:
             if event.type == pygame.QUIT:
                 self.running = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    self.selectedTileType = "wall"
+                    self.selectedImage = pygame.image.load("assets/tilemap/wall.png").convert_alpha()
+                    self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
+                if event.key == pygame.K_2:
+                    self.selectedTileType = "floor"
+                    self.selectedImage = pygame.image.load("assets/tilemap/floor.png").convert_alpha()
+                    self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
+                if event.key == pygame.K_r:
+                    self.tilemap.stylize_map()
+
+
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -83,11 +113,20 @@ class LevelEditor:
                     image_x = (mouse_pos[0] - 1300) // 48
                     image_y = (mouse_pos[1] - 130) // 48
                     self.selectedImage = self.tilemapAssetsScreen.subsurface((image_x * 48, image_y * 48, 48, 48))
+                    self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
+                    self.selectedImage.set_colorkey((0, 0, 0))
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.clicking = False
+
+                if event.button == 3:
+                    self.right_clicking = False
 
 
 
     def render(self):
-
+        self.virtual_screen.fill((100, 100, 100))
         self.tilemap.render(self.virtual_screen, offset=self.render_camera)
 
         # scale the virutal screen onto the actual screen
@@ -102,10 +141,11 @@ class LevelEditor:
 
         pygame.display.flip()
         pygame.display.update()
+        self.screen.fill((0, 0, 0))
 
     def run(self):
         while True:
-            self.virtual_screen.fill((100, 100, 100))
+            # self.virtual_screen.fill((100, 100, 100))
             self.update()
 
 

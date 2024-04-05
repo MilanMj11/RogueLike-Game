@@ -200,16 +200,23 @@ class TileMap:
                     tile.initImage()
                     return
 
-
-        tile.initImage()
+        if tile != None:
+            tile.initImage()
 
     def stylize_map(self):
         for row in range(self.height):
             for col in range(self.width):
                 self.setCorrectAssetPosition(row, col)
 
+    def setTileImage(self, row, col, image):
+        self.tiles[row][col].setImage(image)
+    def setTileAssetPosition(self, row, col, assetPosition):
+        self.getTile(row, col).assetPosition = assetPosition
     def setTile(self, row, col, type):
         self.tiles[row][col] = Tile(row, col, type)
+
+    def delTile(self, row, col):
+        self.tiles[row][col] = None
 
     def getTile(self, row, col):
         return self.tiles[row][col]
