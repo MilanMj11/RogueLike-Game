@@ -71,7 +71,6 @@ class TileMap:
             for j in range(7):
                 self.setTile(5 + i, 5 + j, "wall")
 
-
         for i in range(5):
             for j in range(5):
                 self.setTile(9 + i, 9 + j, "wall")
@@ -80,6 +79,10 @@ class TileMap:
 
     def setCorrectAssetPosition(self, row, col):
         tile = self.getTile(row, col)
+
+        if tile == None:
+            return
+
         if tile != None:
             if tile.type == "floor":
 
@@ -157,8 +160,7 @@ class TileMap:
                             if tile.assetPosition == [4, 3]:
                                 tile.assetPosition = [2, 0]
 
-                        #tile.assetPosition = [2, 0]
-
+                        # tile.assetPosition = [2, 0]
 
                 if tile.assetPosition == [4, 3]:
                     if self.getType(row + 1, col) == "wall":
@@ -177,7 +179,6 @@ class TileMap:
                         if self.getType(row - 1, col - 1) == "floor":
                             tile.assetPosition = [3, 2]
 
-
                     if self.getType(row, col + 1) == "wall":
                         if self.getType(row + 1, col + 1) == "wall":
                             if self.getType(row + 2, col + 1) == "floor":
@@ -189,7 +190,6 @@ class TileMap:
                             if self.getType(row + 2, col - 1) == "floor":
                                 if self.getType(row + 2, col) != "floor":
                                     tile.assetPosition = [3, 0]
-
 
                 if tile.assetPosition != [4, 3]:
                     tile.initImage()
@@ -210,8 +210,13 @@ class TileMap:
 
     def setTileImage(self, row, col, image):
         self.tiles[row][col].setImage(image)
+
+    def setTileDecorImage(self, row, col, image):
+        self.tiles[row][col].decorImage = image
+
     def setTileAssetPosition(self, row, col, assetPosition):
         self.getTile(row, col).assetPosition = assetPosition
+
     def setTile(self, row, col, type):
         self.tiles[row][col] = Tile(row, col, type)
 
@@ -238,6 +243,7 @@ class Tile(pygame.sprite.Sprite):
         self.assetPosition = [0, 0]
         self.rotation = 0
         self.initImage()
+        self.decorImage = None
 
     def getRect(self):
         return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
@@ -264,3 +270,5 @@ class Tile(pygame.sprite.Sprite):
 
     def render(self, screen, offset=(0, 0)):
         screen.blit(self.image, (self.rect.x - offset[0], self.rect.y - offset[1]))
+        if self.decorImage != None:
+            screen.blit(self.decorImage, (self.rect.x - offset[0], self.rect.y - offset[1]))

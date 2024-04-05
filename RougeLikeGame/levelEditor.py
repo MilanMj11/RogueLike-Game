@@ -40,8 +40,6 @@ class LevelEditor:
             pygame.quit()
             quit()
 
-
-        self.render()
         self.checkEvents()
 
         mouse_pos = pygame.mouse.get_pos()
@@ -60,6 +58,11 @@ class LevelEditor:
             self.screen.blit(self.selectedImage, mouse_pos)
 
         if self.ongrid == True and self.selectedImage != None:
+
+            imageCopy = self.selectedImage.copy()
+            imageCopy.set_alpha(100)
+            self.virtual_screen.blit(imageCopy, (col * 42.6 - self.render_camera[0], row * 42.6 - self.render_camera[1]))
+
             if self.clicking:
                 if self.selectedTileType == "wall":
                     self.tilemap.setTile(row, col,"wall")
@@ -67,6 +70,9 @@ class LevelEditor:
                 if self.selectedTileType == "floor":
                     self.tilemap.setTile(row, col, "floor")
                     self.tilemap.setTileImage(row, col, self.selectedImage)
+                if self.selectedTileType == "decor":
+                    if self.tilemap.getTile(row, col) != None:
+                        self.tilemap.setTileDecorImage(row, col, self.selectedImage)
 
                 if self.selectedTileType == None and self.tilemap.getTile(row, col) != None:
                     self.tilemap.setTileImage(row, col, self.selectedImage)
@@ -75,6 +81,8 @@ class LevelEditor:
                 self.tilemap.delTile(row, col)
 
         self.clock.tick(60)
+
+        self.render()
 
     def checkEvents(self):
 
@@ -115,6 +123,7 @@ class LevelEditor:
                     self.selectedImage = self.tilemapAssetsScreen.subsurface((image_x * 48, image_y * 48, 48, 48))
                     self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
                     self.selectedImage.set_colorkey((0, 0, 0))
+                    self.selectedTileType = "decor"
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
