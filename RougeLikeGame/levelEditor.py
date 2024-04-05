@@ -43,8 +43,10 @@ class LevelEditor:
         self.checkEvents()
 
         mouse_pos = pygame.mouse.get_pos()
+
         # if the mouse is on the tilemap
-        if mouse_pos[0] > 10 and mouse_pos[0] < 10 + SCREEN_WIDTH * 2 // 3  and mouse_pos[1] > 130 and mouse_pos[1] < 130 + SCREEN_HEIGHT * 2 // 3:
+        if mouse_pos[0] > 10 and mouse_pos[0] < 10 + SCREEN_WIDTH * 2 // 3 and mouse_pos[1] > 130 and mouse_pos[
+            1] < 130 + SCREEN_HEIGHT * 2 // 3:
             self.ongrid = True
             # get the tile that the mouse is on
             row = int((mouse_pos[1] - 130 + self.render_camera[1]) / 42.6)
@@ -61,11 +63,12 @@ class LevelEditor:
 
             imageCopy = self.selectedImage.copy()
             imageCopy.set_alpha(100)
-            self.virtual_screen.blit(imageCopy, (col * 42.6 - self.render_camera[0], row * 42.6 - self.render_camera[1]))
+            self.virtual_screen.blit(imageCopy,
+                                     (col * 42.6 - self.render_camera[0], row * 42.6 - self.render_camera[1]))
 
             if self.clicking:
                 if self.selectedTileType == "wall":
-                    self.tilemap.setTile(row, col,"wall")
+                    self.tilemap.setTile(row, col, "wall")
                     self.tilemap.setTileImage(row, col, self.selectedImage)
                 if self.selectedTileType == "floor":
                     self.tilemap.setTile(row, col, "floor")
@@ -77,8 +80,16 @@ class LevelEditor:
                 if self.selectedTileType == None and self.tilemap.getTile(row, col) != None:
                     self.tilemap.setTileImage(row, col, self.selectedImage)
 
-            if self.right_clicking:
-                self.tilemap.delTile(row, col)
+        if self.ongrid == True:
+            if self.tilemap.getTile(row, col) != None:
+
+                # If I press shift and right click, then I delete the decor
+                if self.shift == True and self.right_clicking == True:
+                    self.tilemap.setTileDecorImage(row, col, None)
+
+                # If I press right click but no shift, then I delete the tile
+                if self.shift == False and self.right_clicking == True:
+                    self.tilemap.delTile(row, col)
 
         self.clock.tick(60)
 
@@ -104,7 +115,12 @@ class LevelEditor:
                 if event.key == pygame.K_r:
                     self.tilemap.stylize_map()
 
+                if event.key == pygame.K_LSHIFT:
+                    self.shift = True
 
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LSHIFT:
+                    self.shift = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -116,7 +132,8 @@ class LevelEditor:
                 mouse_pos = pygame.mouse.get_pos()
                 # if the mouse is on the tilemapAssetsScreen
                 # then we need to select the image that was clicked
-                if mouse_pos[0] > 1300 and mouse_pos[0] < 1300 + 576 and mouse_pos[1] > 130 and mouse_pos[1] < 130 + 528:
+                if mouse_pos[0] > 1300 and mouse_pos[0] < 1300 + 576 and mouse_pos[1] > 130 and mouse_pos[
+                    1] < 130 + 528:
                     # get the 16x16 image that was clicked
                     image_x = (mouse_pos[0] - 1300) // 48
                     image_y = (mouse_pos[1] - 130) // 48
@@ -131,8 +148,6 @@ class LevelEditor:
 
                 if event.button == 3:
                     self.right_clicking = False
-
-
 
     def render(self):
         self.virtual_screen.fill((100, 100, 100))
@@ -156,11 +171,6 @@ class LevelEditor:
         while True:
             # self.virtual_screen.fill((100, 100, 100))
             self.update()
-
-
-
-
-
 
 
 LevelEditor().run()
