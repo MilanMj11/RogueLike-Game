@@ -15,6 +15,89 @@ class TileMap:
         self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
         self.last_randomSet_tile_ind = 0
 
+    def returnInformation(self):
+        return (self.width, self.height, self.tile_size)
+    def save(self, filename):
+        # save the tilemap to a file
+
+        # create a file with the filename and write the tilemap to it
+        with open(filename, "w") as file:
+            file.write(str(self.returnInformation()))
+            file.write("\n")
+            for row in range(self.height):
+                for col in range(self.width):
+                    tile = self.getTile(row, col)
+                    if tile != None:
+                        file.write(str(tile.returnInformation()))
+                        file.write("\n")
+
+    def load(self, filename):
+        # load the tilemap from the file and set the tilemap to the loaded tilemap
+
+        # open the file with the filename and read the tilemap from it
+        with open(filename, "r") as file:
+            # reading the tilemap information
+            tilemap_info = file.readline().strip()
+            tilemap_info = tilemap_info[1:-1].split(", ")
+            self.width = int(tilemap_info[0])
+            self.height = int(tilemap_info[1])
+            self.tile_size = int(tilemap_info[2])
+
+            # read the tiles from the file
+            for row in range(self.height):
+                for col in range(self.width):
+                    tile_info = file.readline().strip()
+                    tile_info = tile_info[1:-1].split(", ")
+
+                    tile_row = int(tile_info[0])
+                    tile_col = int(tile_info[1])
+
+                    # get rid of ' ' ' ' from the string
+                    tile_type = tile_info[2].strip('"').strip("'")
+
+                    tile_assetPosition_x = int(tile_info[3][1:])
+                    tile_assetPosition_y = int(tile_info[4][:-1])
+                    tile_assetPosition = [tile_assetPosition_x, tile_assetPosition_y]
+                    tile_rotation = int(tile_info[5])
+
+                    tile_decorAssetPosition = [int(tile_info[6][1:]), int(tile_info[7][:-1])]
+
+                    self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition)
+
+        # self.stylize_map()
+
+
+    def loadTile(self, row, col, type, assetPosition, rotation, decorAssetPosition):
+        self.setTile(row, col, str(type))
+
+        self.getTile(row, col).rotation = rotation
+
+        # get Tile Image from the tilemap_packed.png with the assetPosition
+
+        if assetPosition != [-1, -1]:
+
+            self.getTile(row, col).assetPosition = assetPosition
+
+            tilemapAssetImage = pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()
+            tile_surface = tilemapAssetImage.subsurface(pygame.Rect(assetPosition[0] * 16, assetPosition[1] * 16, 16, 16))
+            image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))
+            image = pygame.transform.rotate(image, rotation)
+            self.setTileImage(row, col, image)
+
+        # get Decor Image from the tilemap_packed.png with the decorAssetPosition
+
+        if decorAssetPosition != [-1, -1]:
+
+            self.getTile(row, col).decorAssetPosition = decorAssetPosition
+
+            decorImage = pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()
+            decor_surface = decorImage.subsurface(pygame.Rect(decorAssetPosition[0] * 16, decorAssetPosition[1] * 16, 16, 16))
+            decorImage = pygame.transform.scale(decor_surface, (TILESIZE, TILESIZE))
+            self.setTileDecorImage(row, col, decorImage)
+
+        # self.setCorrectAssetPosition(row, col)
+
+
     def interior(self, row, col):
         return row >= 0 and row < self.height and col >= 0 and col < self.width
 
@@ -208,6 +291,28 @@ class TileMap:
             for col in range(self.width):
                 self.setCorrectAssetPosition(row, col)
 
+    def fillNonesWithWalls(self):
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.tiles[row][col] == None:
+                    self.setTile(row, col, "wall")
+
+    def reduceDimensions(self, new_width, new_height):
+        self.width = new_width
+        self.height = new_height
+
+    def reduceDimensionsDinamically(self):
+        # find the most right and most bottom tile
+        most_right = 0
+        most_bottom = 0
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.tiles[row][col] != None:
+                    most_right = max(most_right, col)
+                    most_bottom = max(most_bottom, row)
+
+        self.reduceDimensions(most_right + 1, most_bottom + 1)
+        self.fillNonesWithWalls()
 
     def fillTileWithFloor(self):
         for row in range(self.height):
@@ -219,6 +324,9 @@ class TileMap:
 
     def setTileDecorImage(self, row, col, image):
         self.tiles[row][col].decorImage = image
+
+    def setTileDecorAssetPosition(self, row, col, assetPosition):
+        self.tiles[row][col].decorAssetPosition = assetPosition
 
     def setTileAssetPosition(self, row, col, assetPosition):
         self.getTile(row, col).assetPosition = assetPosition
@@ -246,10 +354,15 @@ class Tile(pygame.sprite.Sprite):
         self.type = type
         self.row = row
         self.col = col
-        self.assetPosition = [0, 0]
+        self.assetPosition = [-1, -1]
         self.rotation = 0
         self.initImage()
         self.decorImage = None
+        self.decorAssetPosition = [-1, -1]
+
+    def returnInformation(self):
+        if self != None:
+            return (self.row, self.col, self.type, self.assetPosition, self.rotation, self.decorAssetPosition)
 
     def getRect(self):
         return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
@@ -261,13 +374,14 @@ class Tile(pygame.sprite.Sprite):
             self.setImage(image)
             return
 
-        tile_surface = (pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()).subsurface(
-            pygame.Rect(self.assetPosition[0] * 16, self.assetPosition[1] * 16, 16, 16))
-        image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))  # .transform.scale((TILESIZE, TILESIZE))
-        image = pygame.transform.rotate(image, self.rotation)
-        # scale the image to the tile size
-        # image = pygame.transform.scale(image, (TILESIZE, TILESIZE))
-        self.setImage(image)
+        if self.assetPosition != [-1, -1]:
+            tile_surface = (pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()).subsurface(
+                pygame.Rect(self.assetPosition[0] * 16, self.assetPosition[1] * 16, 16, 16))
+            image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))  # .transform.scale((TILESIZE, TILESIZE))
+            image = pygame.transform.rotate(image, self.rotation)
+            # scale the image to the tile size
+            # image = pygame.transform.scale(image, (TILESIZE, TILESIZE))
+            self.setImage(image)
 
     def setImage(self, image):
         self.image = image
@@ -275,6 +389,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect.topleft = (self.col * TILESIZE, self.row * TILESIZE)
 
     def render(self, screen, offset=(0, 0)):
-        screen.blit(self.image, (self.rect.x - offset[0], self.rect.y - offset[1]))
-        if self.decorImage != None:
-            screen.blit(self.decorImage, (self.rect.x - offset[0], self.rect.y - offset[1]))
+        if self.image != None:
+            screen.blit(self.image, (self.rect.x - offset[0], self.rect.y - offset[1]))
+            if self.decorImage != None:
+                screen.blit(self.decorImage, (self.rect.x - offset[0], self.rect.y - offset[1]))

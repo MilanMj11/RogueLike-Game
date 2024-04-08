@@ -10,6 +10,8 @@ Rules of how this editor works are as follows:
 7. Pressing 3 or 4 will rotate the selected image ( the decor image )
 
 8. Moving through the tilemap will be done with the WASD keys
+9. Pressing F will reduce the dimensions of the tilemap dynamically to the minimum size possible
+   Considering all the placed tiles on the tilemap
 '''
 
 
@@ -35,14 +37,18 @@ class LevelEditor:
         self.running = True
         self.tilemap = TileMap(150, 150)
         self.movement = [False, False, False, False]
+        self.currentRotation = 0
 
         self.clicking = False
         self.right_clicking = False
         self.shift = False
+        self.ctrl = False
         self.ongrid = False
 
         self.selectedImage = None
         self.selectedTileType = None
+        self.selectedImageAssetPosition = None
+
 
     def updateCamera(self):
 
@@ -73,7 +79,7 @@ class LevelEditor:
             '''
             row = int((mouse_pos[1] - 130 + self.render_camera[1]) / 64)
             col = int((mouse_pos[0] - 10 + self.render_camera[0]) / 64)
-            print(row, col)
+
             # 42.6 = 64 * (2 / 3)
             # TILESIZE * (SCALING FACTOR FOR RENDERING LEVEL EDITOR)
 
@@ -96,6 +102,8 @@ class LevelEditor:
                 if self.selectedTileType == "decor":
                     if self.tilemap.getTile(row, col) != None:
                         self.tilemap.setTileDecorImage(row, col, self.selectedImage)
+                        self.tilemap.setTileDecorAssetPosition(row, col, self.selectedImageAssetPosition)
+                        self.tilemap.getTile(row, col).rotation = self.currentRotation
 
                 if self.selectedTileType == None and self.tilemap.getTile(row, col) != None:
                     self.tilemap.setTileImage(row, col, self.selectedImage)
@@ -135,25 +143,41 @@ class LevelEditor:
 
                 if event.key == pygame.K_3:
                     self.selectedImage = pygame.transform.rotate(self.selectedImage, 90)
+                    self.currentRotation += 90
 
                 if event.key == pygame.K_4:
                     self.selectedImage = pygame.transform.rotate(self.selectedImage, -90)
+                    self.currentRotation -= 90
+
+                if event.key == pygame.K_f:
+                    self.tilemap.reduceDimensionsDinamically()
 
                 if event.key == pygame.K_LSHIFT:
                     self.shift = True
 
+                if event.key == pygame.K_LCTRL:
+                    self.ctrl = True
+
                 if event.key == pygame.K_w:
                     self.movement[0] = True
                 if event.key == pygame.K_s:
-                    self.movement[1] = True
+                    if self.ctrl == False:
+                        self.movement[1] = True
                 if event.key == pygame.K_a:
                     self.movement[2] = True
                 if event.key == pygame.K_d:
                     self.movement[3] = True
 
+                # SAVING THE LEVEL WITH CTRL+S IN NEW TEXT FILE
+                if self.ctrl == True and event.key == pygame.K_s:
+                    self.tilemap.save("level1.txt")
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LSHIFT:
                     self.shift = False
+
+                if event.key == pygame.K_LCTRL:
+                    self.ctrl = False
 
                 if event.key == pygame.K_w:
                     self.movement[0] = False
@@ -180,6 +204,7 @@ class LevelEditor:
                     # get the 16x16 image that was clicked
                     image_x = (mouse_pos[0] - 1300) // 48
                     image_y = (mouse_pos[1] - 130) // 48
+                    self.selectedImageAssetPosition = [image_x, image_y]
                     self.selectedImage = self.tilemapAssetsScreen.subsurface((image_x * 48, image_y * 48, 48, 48))
                     self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
                     self.selectedImage.set_colorkey((0, 0, 0))
@@ -225,6 +250,8 @@ class LevelEditor:
         self.screen.fill((0, 0, 0))
 
     def run(self):
+        self.tilemap.load("level1.txt")
+
         while True:
             # self.virtual_screen.fill((100, 100, 100))
 
