@@ -32,6 +32,12 @@ class TileMap:
                         file.write("\n")
 
     def load(self, filename):
+        # if the file is empty do nothing:
+        with open(filename, "r") as file:
+            if file.readline() == "":
+                return
+
+
         # load the tilemap from the file and set the tilemap to the loaded tilemap
 
         # open the file with the filename and read the tilemap from it
