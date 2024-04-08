@@ -208,6 +208,12 @@ class TileMap:
             for col in range(self.width):
                 self.setCorrectAssetPosition(row, col)
 
+
+    def fillTileWithFloor(self):
+        for row in range(self.height):
+            for col in range(self.width):
+                self.setTile(row, col, "floor")
+
     def setTileImage(self, row, col, image):
         self.tiles[row][col].setImage(image)
 
