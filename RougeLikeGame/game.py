@@ -49,9 +49,9 @@ class GameController:
     def updateCamera(self):
         # camera follows the player with a smooth effect , MIGHT CHANGE VALUES LATER
         self.camera[0] += (self.player.position[0] - self.camera[0] - VIRTUALSCREEN_WIDTH / 2 + self.player.size[
-            0] / 2) / 10
+            0] / 2) / CAMERA_FOLLOW_RATE
         self.camera[1] += (self.player.position[1] - self.camera[1] - VIRTUALSCREEN_HEIGHT / 2 + self.player.size[
-            1] / 2) / 10
+            1] / 2) / CAMERA_FOLLOW_RATE
         self.render_camera = [int(self.camera[0]), int(self.camera[1])]
 
     def update(self):

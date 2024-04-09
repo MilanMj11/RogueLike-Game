@@ -14,10 +14,10 @@ class Dungeon1:
 
     def init_Dungeon_1(self):
         self.game.tilemap = TileMap(100,100)
-        self.game.tilemap.load("level1.txt")
+        self.game.tilemap.load("Dungeons/dungeon1_map.txt")
         # self.game.tilemap.init_Tilemap_Dungeon_1()
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
-        self.game.player.speed = 5
+        self.game.player.speed = 2
 
     def checkDungeon1GameEvents(self, eventList):
         for event in eventList:

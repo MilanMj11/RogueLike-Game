@@ -14,14 +14,12 @@ Rules of how this editor works are as follows:
    Considering all the placed tiles on the tilemap
 '''
 
-
 import sys
 import pygame
 from constants import *
 from tiles import TileMap, Tile
 
 RENDER_SCALE = 2.0
-
 
 class LevelEditor:
     def __init__(self):
@@ -49,11 +47,10 @@ class LevelEditor:
         self.selectedTileType = None
         self.selectedImageAssetPosition = None
 
-
     def updateCamera(self):
 
-        self.camera[1] += (self.movement[1] - self.movement[0]) * 5
-        self.camera[0] += (self.movement[3] - self.movement[2]) * 5
+        self.camera[1] += (self.movement[1] - self.movement[0]) * 8
+        self.camera[0] += (self.movement[3] - self.movement[2]) * 8
         self.render_camera = [int(self.camera[0]), int(self.camera[1])]
 
     def update(self):
@@ -77,8 +74,8 @@ class LevelEditor:
             row = int((mouse_pos[1] - 130) / 64) + int (self.render_camera[1] / 64)
             col = int((mouse_pos[0] - 10) / 64) + int (self.render_camera[0] / 64)
             '''
-            row = int((mouse_pos[1] - 130 + self.render_camera[1]) / 64)
-            col = int((mouse_pos[0] - 10 + self.render_camera[0]) / 64)
+            row = int((mouse_pos[1] - 130 + self.render_camera[1]) / TILESIZE)
+            col = int((mouse_pos[0] - 10 + self.render_camera[0]) / TILESIZE)
 
             # 42.6 = 64 * (2 / 3)
             # TILESIZE * (SCALING FACTOR FOR RENDERING LEVEL EDITOR)
@@ -114,6 +111,7 @@ class LevelEditor:
                 # If I press shift and right click, then I delete the decor
                 if self.shift == True and self.right_clicking == True:
                     self.tilemap.setTileDecorImage(row, col, None)
+                    self.tilemap.setTileDecorAssetPosition(row, col, [-1, -1])
 
                 # If I press right click but no shift, then I delete the tile
                 if self.shift == False and self.right_clicking == True:
@@ -133,11 +131,11 @@ class LevelEditor:
                 if event.key == pygame.K_1:
                     self.selectedTileType = "wall"
                     self.selectedImage = pygame.image.load("assets/tilemap/wall.png").convert_alpha()
-                    self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
+                    self.selectedImage = pygame.transform.scale(self.selectedImage, (TILESIZE, TILESIZE))
                 if event.key == pygame.K_2:
                     self.selectedTileType = "floor"
                     self.selectedImage = pygame.image.load("assets/tilemap/floor.png").convert_alpha()
-                    self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
+                    self.selectedImage = pygame.transform.scale(self.selectedImage, (TILESIZE, TILESIZE))
                 if event.key == pygame.K_r:
                     self.tilemap.stylize_map()
 
@@ -206,7 +204,7 @@ class LevelEditor:
                     image_y = (mouse_pos[1] - 130) // 48
                     self.selectedImageAssetPosition = [image_x, image_y]
                     self.selectedImage = self.tilemapAssetsScreen.subsurface((image_x * 48, image_y * 48, 48, 48))
-                    self.selectedImage = pygame.transform.scale(self.selectedImage, (64, 64))
+                    self.selectedImage = pygame.transform.scale(self.selectedImage, (TILESIZE, TILESIZE))
                     self.selectedImage.set_colorkey((0, 0, 0))
                     self.selectedTileType = "decor"
 
@@ -221,19 +219,17 @@ class LevelEditor:
         self.virtual_screen.fill((100, 100, 100))
         self.tilemap.render(self.virtual_screen, offset=self.render_camera)
 
-
         # highlight the chosen piece on the tilemap before applying it
         if self.ongrid == True and self.selectedImage != None:
             imageCopy = self.selectedImage.copy()
             imageCopy.set_alpha(100)
             mouse_pos = pygame.mouse.get_pos()
-            row = int((mouse_pos[1] - 130 + self.render_camera[1]) / 64)
-            col = int((mouse_pos[0] - 10 + self.render_camera[0]) / 64)
+            row = int((mouse_pos[1] - 130 + self.render_camera[1]) / TILESIZE)
+            col = int((mouse_pos[0] - 10 + self.render_camera[0]) / TILESIZE)
             # draw the image on the tilemap at the tile that the mouse is on
-            self.virtual_screen.blit(imageCopy, (col * 64 - self.render_camera[0], row * 64 - self.render_camera[1]))
+            self.virtual_screen.blit(imageCopy, (col * TILESIZE - self.render_camera[0], row * TILESIZE - self.render_camera[1]))
 
-            #self.virtual_screen.blit(imageCopy, (col * 64, row * 64))
-
+            # self.virtual_screen.blit(imageCopy, (col * 64, row * 64))
 
         # scale the virutal screen onto the actual screen
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH * 2 // 3, SCREEN_HEIGHT * 2 // 3))

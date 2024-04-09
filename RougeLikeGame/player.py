@@ -10,7 +10,7 @@ NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1]
 
 
 class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
-    def __init__(self, game, pos, size=(64, 64)):
+    def __init__(self, game, pos, size=(32, 32)):
         super().__init__()
         # Animation frames
         self.animation_frames = [

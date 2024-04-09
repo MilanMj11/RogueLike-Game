@@ -50,25 +50,30 @@ class TileMap:
             self.tile_size = int(tilemap_info[2])
 
             # read the tiles from the file
-            for row in range(self.height):
-                for col in range(self.width):
-                    tile_info = file.readline().strip()
-                    tile_info = tile_info[1:-1].split(", ")
 
-                    tile_row = int(tile_info[0])
-                    tile_col = int(tile_info[1])
+            # while I'm reading lines:
 
-                    # get rid of ' ' ' ' from the string
-                    tile_type = tile_info[2].strip('"').strip("'")
+            while True:
 
-                    tile_assetPosition_x = int(tile_info[3][1:])
-                    tile_assetPosition_y = int(tile_info[4][:-1])
-                    tile_assetPosition = [tile_assetPosition_x, tile_assetPosition_y]
-                    tile_rotation = int(tile_info[5])
+                tile_info = file.readline().strip()
+                if not tile_info:
+                    break
+                tile_info = tile_info[1:-1].split(", ")
 
-                    tile_decorAssetPosition = [int(tile_info[6][1:]), int(tile_info[7][:-1])]
+                tile_row = int(tile_info[0])
+                tile_col = int(tile_info[1])
 
-                    self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition)
+                # get rid of ' ' ' ' from the string
+                tile_type = tile_info[2].strip('"').strip("'")
+
+                tile_assetPosition_x = int(tile_info[3][1:])
+                tile_assetPosition_y = int(tile_info[4][:-1])
+                tile_assetPosition = [tile_assetPosition_x, tile_assetPosition_y]
+                tile_rotation = int(tile_info[5])
+
+                tile_decorAssetPosition = [int(tile_info[6][1:]), int(tile_info[7][:-1])]
+
+                self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition)
 
         # self.stylize_map()
 
