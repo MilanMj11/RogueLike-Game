@@ -7,7 +7,7 @@ from Enemies.enemy import Enemy
 
 
 class SkeletonFighter(Enemy):
-    def __init__(self, game, pos, size=(48, 48)):
+    def __init__(self, game, pos, size=(24, 24)):
         super().__init__(game, pos, size)
         self.image = pygame.image.load("assets/skeleton_fighter/skeletonFighter_frame1.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, size)

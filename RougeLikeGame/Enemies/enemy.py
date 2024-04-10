@@ -3,7 +3,7 @@ import math
 from constants import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, pos, size=(64, 64)):
+    def __init__(self, game, pos, size=(20, 20)):
         super().__init__()
         self.game = game
         self.position = list(pos)
