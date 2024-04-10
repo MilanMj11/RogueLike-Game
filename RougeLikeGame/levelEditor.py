@@ -235,7 +235,7 @@ class LevelEditor:
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH * 2 // 3, SCREEN_HEIGHT * 2 // 3))
         self.screen.blit(scaledScreen, (10, 130))
 
-        assetsImage = pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()
+        assetsImage = pygame.image.load("assets/tilemap/Tilemap/desert_tilemap_packed.png").convert_alpha()
         assetsImage = pygame.transform.scale(assetsImage, (576, 528))
 
         self.tilemapAssetsScreen.blit(assetsImage, (0, 0))

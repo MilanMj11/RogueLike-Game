@@ -31,7 +31,7 @@ class TileMap:
                         file.write(str(tile.returnInformation()))
                         file.write("\n")
 
-    def load(self, filename):
+    def load(self, filename, tilemap_type = "desert"):
         # if the file is empty do nothing:
         with open(filename, "r") as file:
             if file.readline() == "":
@@ -78,7 +78,7 @@ class TileMap:
         # self.stylize_map()
 
 
-    def loadTile(self, row, col, type, assetPosition, rotation, decorAssetPosition):
+    def loadTile(self, row, col, type, assetPosition, rotation, decorAssetPosition, tilemap_type = "desert"):
         self.setTile(row, col, str(type))
 
         self.getTile(row, col).rotation = rotation
@@ -89,7 +89,7 @@ class TileMap:
 
             self.getTile(row, col).assetPosition = assetPosition
 
-            tilemapAssetImage = pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()
+            tilemapAssetImage = pygame.image.load("assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
             tile_surface = tilemapAssetImage.subsurface(pygame.Rect(assetPosition[0] * 16, assetPosition[1] * 16, 16, 16))
             image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))
             image = pygame.transform.rotate(image, rotation)
@@ -101,7 +101,7 @@ class TileMap:
 
             self.getTile(row, col).decorAssetPosition = decorAssetPosition
 
-            decorImage = pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()
+            decorImage = pygame.image.load("assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
             decor_surface = decorImage.subsurface(pygame.Rect(decorAssetPosition[0] * 16, decorAssetPosition[1] * 16, 16, 16))
             decorImage = pygame.transform.scale(decor_surface, (TILESIZE, TILESIZE))
             self.setTileDecorImage(row, col, decorImage)
@@ -378,7 +378,7 @@ class Tile(pygame.sprite.Sprite):
     def getRect(self):
         return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
 
-    def initImage(self):
+    def initImage(self, tilemap_type = "desert"):
         if self.type == "BLANK":
             image = pygame.Surface((TILESIZE, TILESIZE))
             image.fill((0, 0, 0))
@@ -386,7 +386,7 @@ class Tile(pygame.sprite.Sprite):
             return
 
         if self.assetPosition != [-1, -1]:
-            tile_surface = (pygame.image.load("assets/tilemap/Tilemap/tilemap_packed.png").convert_alpha()).subsurface(
+            tile_surface = (pygame.image.load("assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()).subsurface(
                 pygame.Rect(self.assetPosition[0] * 16, self.assetPosition[1] * 16, 16, 16))
             image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))  # .transform.scale((TILESIZE, TILESIZE))
             image = pygame.transform.rotate(image, self.rotation)

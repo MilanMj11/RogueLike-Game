@@ -17,7 +17,7 @@ class Dungeon1:
         self.game.tilemap.load("Dungeons/dungeon1_map.txt")
         # self.game.tilemap.init_Tilemap_Dungeon_1()
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
-        self.game.player.speed = 2
+        self.game.player.speed = 1.2
 
     def checkDungeon1GameEvents(self, eventList):
         for event in eventList:
@@ -37,9 +37,10 @@ class Dungeon1:
 
     def updateDungeon1(self):
 
-        self.game.updatePlayer()
-        self.game.updateProjectiles()
         self.game.updateCamera()
+        self.game.updatePlayer()
+
+        self.game.updateProjectiles()
 
         # check if player died
         if self.game.player.health <= 0:
@@ -57,9 +58,6 @@ class Dungeon1:
         if self.game.enemiesList.__len__() < 5:
             pass
             # self.spawnSkeletonFighter()
-
-
-
 
 
     def renderDungeon1(self):

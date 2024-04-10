@@ -10,7 +10,7 @@ NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1]
 
 
 class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
-    def __init__(self, game, pos, size=(32, 32)):
+    def __init__(self, game, pos, size=(20, 20)):
         super().__init__()
         # Animation frames
         self.animation_frames = [
@@ -150,8 +150,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             self.facing = "RIGHT"
 
         if movement[0] != 0 and movement[1] != 0:
-            movement[0] *= 0.7071
-            movement[1] *= 0.7071
+            movement[0] *= 0.70
+            movement[1] *= 0.70
 
         return movement
 

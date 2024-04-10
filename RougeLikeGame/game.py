@@ -4,6 +4,7 @@ from gameStateManager import GameStateManager
 from Lobby.lobby import Lobby
 from Dungeons.dungeon1 import Dungeon1
 
+
 class GameController:
     def __init__(self):
         pygame.init()
@@ -47,12 +48,17 @@ class GameController:
             projectile.update()
 
     def updateCamera(self):
+
+        current_fps = self.clock.get_fps()
+        if current_fps < 1:
+            current_fps = FPS
+
         # camera follows the player with a smooth effect , MIGHT CHANGE VALUES LATER
         self.camera[0] += (self.player.position[0] - self.camera[0] - VIRTUALSCREEN_WIDTH / 2 + self.player.size[
-            0] / 2) / CAMERA_FOLLOW_RATE
+            0] / 2) / CAMERA_FOLLOW_RATE / current_fps * FPS
         self.camera[1] += (self.player.position[1] - self.camera[1] - VIRTUALSCREEN_HEIGHT / 2 + self.player.size[
-            1] / 2) / CAMERA_FOLLOW_RATE
-        self.render_camera = [int(self.camera[0]), int(self.camera[1])]
+            1] / 2) / CAMERA_FOLLOW_RATE / current_fps * FPS
+        self.render_camera = [(self.camera[0]), (self.camera[1])]
 
     def update(self):
 
@@ -66,7 +72,7 @@ class GameController:
         if self.gameStateManager.gameState == "Lobby":
             self.Lobby.updateLobby()
 
-        self.clock.tick(60)
+        self.clock.tick(FPS)
         self.checkGameEvents()
         self.render()
 
