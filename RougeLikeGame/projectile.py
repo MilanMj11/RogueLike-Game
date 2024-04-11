@@ -20,7 +20,7 @@ class Projectile(pygame.sprite.Sprite):
     def getRect(self):
         return pygame.Rect(self.x, self.y, 5, 5)
 
-    def setImage(self, image, size=(16, 16)):
+    def setImage(self, image, size=(20, 20)):
         self.image = pygame.transform.scale(image, size)
 
     def getTilesAround(self):

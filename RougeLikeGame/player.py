@@ -10,7 +10,7 @@ NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1]
 
 
 class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
-    def __init__(self, game, pos, size=(20, 20)):
+    def __init__(self, game, pos, size=(40, 40)):
         super().__init__()
         # Animation frames
         self.animation_frames = [
@@ -41,6 +41,10 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
                                          int((self.position[0] + self.size[0] / 2) / TILESIZE))
+
+    def getTileCoords(self):
+        currentTile = self.getTile()
+        return (currentTile.row, currentTile.col)
 
     def getRectMiddlePoint(self):
         return (self.position[0] + self.size[0] / 2, self.position[1] + self.size[1] / 2)
@@ -90,6 +94,38 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             return True
         return False
 
+
+    def movePlayer(self, movement):
+        tilesAround = self.getTilesAround()
+
+        # check collisions with walls
+        self.position[0] += movement[0]
+        playerRect = self.getRect()
+        for tile in tilesAround:
+            if tile.type == "wall":
+                tileRect = tile.getRect()
+                if playerRect.colliderect(tileRect):
+                    # collided on the x axes
+                    if movement[0] > 0.0:
+                        playerRect.right = tileRect.left
+                    if movement[0] < 0.0:
+                        playerRect.left = tileRect.right
+
+                    self.position[0] = playerRect.x
+
+        self.position[1] += movement[1]
+        playerRect = self.getRect()
+        for tile in tilesAround:
+            if tile.type == "wall":
+                tileRect = tile.getRect()
+                if playerRect.colliderect(tileRect):
+                    # collided on the y axes
+                    if movement[1] > 0.0:
+                        playerRect.bottom = tileRect.top
+                    if movement[1] < 0.0:
+                        playerRect.top = tileRect.bottom
+
+                    self.position[1] = playerRect.y
     def update(self):
 
         ''' For testing , print the player tile coords '''
@@ -104,38 +140,16 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 if self.shootProjectile():
                     self.last_projectile_time = current_time
 
-        movement = self.getDirectionInput()
-
         self.update_animation(current_time)
 
-        # check collisions with walls
-        self.position[0] += movement[0]
-        playerRect = self.getRect()
-        for tile in self.getTilesAround():
-            if tile.type == "wall":
-                tileRect = tile.getRect()
-                if playerRect.colliderect(tileRect):
-                    # collided on the x axes
-                    if movement[0] > 0:
-                        playerRect.right = tileRect.left
-                    if movement[0] < 0:
-                        playerRect.left = tileRect.right
+        MOVEMENT_DIVISION_FACTOR = 1
+        movement = self.getDirectionInput()
+        divided_movement = movement[0] / MOVEMENT_DIVISION_FACTOR, movement[1] / MOVEMENT_DIVISION_FACTOR
 
-                    self.position[0] = playerRect.x
+        for i in range(MOVEMENT_DIVISION_FACTOR):
+            self.movePlayer(divided_movement)
 
-        self.position[1] += movement[1]
-        playerRect = self.getRect()
-        for tile in self.getTilesAround():
-            if tile.type == "wall":
-                tileRect = tile.getRect()
-                if playerRect.colliderect(tileRect):
-                    # collided on the y axes
-                    if movement[1] > 0:
-                        playerRect.bottom = tileRect.top
-                    if movement[1] < 0:
-                        playerRect.top = tileRect.bottom
 
-                    self.position[1] = playerRect.y
 
     def getDirectionInput(self):
         keys = pygame.key.get_pressed()
@@ -152,7 +166,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             movement[0] += self.speed
             self.facing = "RIGHT"
 
-        if movement[0] != 0 and movement[1] != 0:
+        if movement[0] != 0.0 and movement[1] != 0.0:
             movement[0] *= 0.70
             movement[1] *= 0.70
 

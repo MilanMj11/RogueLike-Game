@@ -20,7 +20,7 @@ class Dungeon1:
         self.game.tilemap.load("Dungeons/dungeon1_map.txt")
 
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
-        self.game.player.speed = 1.2
+        self.game.player.speed = 2
 
     def checkDungeon1GameEvents(self, eventList):
         for event in eventList:
@@ -63,7 +63,7 @@ class Dungeon1:
 
     def renderDungeon1(self):
         self.game.virtual_screen.blit(self.game.background, (0, 0))
-        self.game.tilemap.render(self.game.virtual_screen, offset=self.game.render_camera)
+        self.game.tilemap.render(screen= self.game.virtual_screen, tile_pos=self.game.player.getTileCoords() , offset=self.game.render_camera)
         self.game.player.render(self.game.virtual_screen, offset=self.game.render_camera)
         for projectile in self.game.projectiles:
             projectile.render(self.game.virtual_screen, offset=self.game.render_camera)

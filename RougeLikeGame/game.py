@@ -16,8 +16,6 @@ class GameController:
         self.camera = [0, 0]
         self.render_camera = [0, 0]
 
-
-
         self.background = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.background.fill((0, 0, 0))
 

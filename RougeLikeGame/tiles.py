@@ -17,6 +17,7 @@ class TileMap:
 
     def returnInformation(self):
         return (self.width, self.height, self.tile_size)
+
     def save(self, filename):
         # save the tilemap to a file
 
@@ -31,12 +32,11 @@ class TileMap:
                         file.write(str(tile.returnInformation()))
                         file.write("\n")
 
-    def load(self, filename, tilemap_type = "desert"):
+    def load(self, filename, tilemap_type="desert"):
         # if the file is empty do nothing:
         with open(filename, "r") as file:
             if file.readline() == "":
                 return
-
 
         # load the tilemap from the file and set the tilemap to the loaded tilemap
 
@@ -77,8 +77,7 @@ class TileMap:
 
         # self.stylize_map()
 
-
-    def loadTile(self, row, col, type, assetPosition, rotation, decorAssetPosition, tilemap_type = "desert"):
+    def loadTile(self, row, col, type, assetPosition, rotation, decorAssetPosition, tilemap_type="desert"):
         self.setTile(row, col, str(type))
 
         self.getTile(row, col).rotation = rotation
@@ -86,11 +85,12 @@ class TileMap:
         # get Tile Image from the tilemap_packed.png with the assetPosition
 
         if assetPosition != [-1, -1]:
-
             self.getTile(row, col).assetPosition = assetPosition
 
-            tilemapAssetImage = pygame.image.load("assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
-            tile_surface = tilemapAssetImage.subsurface(pygame.Rect(assetPosition[0] * 16, assetPosition[1] * 16, 16, 16))
+            tilemapAssetImage = pygame.image.load(
+                "assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
+            tile_surface = tilemapAssetImage.subsurface(
+                pygame.Rect(assetPosition[0] * 16, assetPosition[1] * 16, 16, 16))
             image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))
             image = pygame.transform.rotate(image, rotation)
             self.setTileImage(row, col, image)
@@ -98,16 +98,16 @@ class TileMap:
         # get Decor Image from the tilemap_packed.png with the decorAssetPosition
 
         if decorAssetPosition != [-1, -1]:
-
             self.getTile(row, col).decorAssetPosition = decorAssetPosition
 
-            decorImage = pygame.image.load("assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
-            decor_surface = decorImage.subsurface(pygame.Rect(decorAssetPosition[0] * 16, decorAssetPosition[1] * 16, 16, 16))
+            decorImage = pygame.image.load(
+                "assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
+            decor_surface = decorImage.subsurface(
+                pygame.Rect(decorAssetPosition[0] * 16, decorAssetPosition[1] * 16, 16, 16))
             decorImage = pygame.transform.scale(decor_surface, (TILESIZE, TILESIZE))
             self.setTileDecorImage(row, col, decorImage)
 
         # self.setCorrectAssetPosition(row, col)
-
 
     def interior(self, row, col):
         return row >= 0 and row < self.height and col >= 0 and col < self.width
@@ -351,9 +351,36 @@ class TileMap:
     def getTile(self, row, col):
         return self.tiles[row][col]
 
+    '''
     def render(self, screen, offset=(0, 0)):
         for row in range(self.height):
             for col in range(self.width):
+                tile = self.getTile(row, col)
+                if tile != None:
+                    tile.render(screen, offset)
+    '''
+    # optimized render
+    def render(self, tile_pos, screen, offset=(0, 0)):
+        # I want to render only the tiles that should be visible instead of all the tiles
+        # I will render the tiles that are in the screen and the tiles that are around the screen
+        screen_width = screen.get_width()
+        screen_height = screen.get_height()
+        tile_size = TILESIZE
+        tilesX = screen_width // tile_size
+        tilesY = screen_height // tile_size
+
+        tilesUp = tilesY // 2 + 2
+        tilesDown = tilesY // 2 + 2
+        tilesLeft = tilesX // 2 + 2
+        tilesRight = tilesX // 2 + 2
+
+        mostLeftTile = max(0, tile_pos[1] - tilesLeft)
+        mostRightTile = min(tile_pos[1] + tilesRight, self.width)
+        mostUpTile = max(0, tile_pos[0] - tilesUp)
+        mostDownTile = min(tile_pos[0] + tilesDown, self.height)
+
+        for row in range(mostUpTile, mostDownTile):
+            for col in range(mostLeftTile, mostRightTile):
                 tile = self.getTile(row, col)
                 if tile != None:
                     tile.render(screen, offset)
@@ -376,9 +403,9 @@ class Tile(pygame.sprite.Sprite):
             return (self.row, self.col, self.type, self.assetPosition, self.rotation, self.decorAssetPosition)
 
     def getRect(self):
-        return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, self.image.get_width(), self.image.get_height())
+        return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, TILESIZE , TILESIZE)
 
-    def initImage(self, tilemap_type = "desert"):
+    def initImage(self, tilemap_type="desert"):
         if self.type == "BLANK":
             image = pygame.Surface((TILESIZE, TILESIZE))
             image.fill((0, 0, 0))
@@ -386,7 +413,8 @@ class Tile(pygame.sprite.Sprite):
             return
 
         if self.assetPosition != [-1, -1]:
-            tile_surface = (pygame.image.load("assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()).subsurface(
+            tile_surface = (pygame.image.load(
+                "assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()).subsurface(
                 pygame.Rect(self.assetPosition[0] * 16, self.assetPosition[1] * 16, 16, 16))
             image = pygame.transform.scale(tile_surface, (TILESIZE, TILESIZE))  # .transform.scale((TILESIZE, TILESIZE))
             image = pygame.transform.rotate(image, self.rotation)
