@@ -5,14 +5,15 @@ import math
 from constants import *
 from Enemies.enemy import Enemy
 
+
 class SkeletonFighter(Enemy):
-    def __init__(self, game, pos, size=(40, 40)):
-        super().__init__(game, pos, size)
+    def __init__(self, game, pos, health=SKELETON_FIGHTER_HEALTH, size=(40, 40)):
+        super().__init__(game, pos, health, size)
         self.image = pygame.image.load("assets/skeleton_fighter/skeletonFighter_frame1.png").convert_alpha()
         self.image = pygame.transform.flip(self.image, True, False)
         self.image = pygame.transform.scale(self.image, size)
         # self.image.set_colorkey((100, 100, 100))
-        self.health = SKELETON_FIGHTER_HEALTH
+        self.health = health
         self.damage = SKELETON_FIGHTER_DAMAGE
         self.attackSpeed = SKELETON_FIGHTER_ATTACK_SPEED
         self.last_attack_time = 0
@@ -44,6 +45,8 @@ class SkeletonFighter(Enemy):
         return True
 
     def update(self):
+
+        super().update()
 
         player = self.game.player
         playerRect = player.getRect()

@@ -2,7 +2,7 @@ import random
 
 import pygame
 from constants import *
-from Lobby.lobbyPreset import *
+
 
 DirectionOFFSET4 = [[0, -1], [0, 1], [-1, 0], [1, 0]]
 

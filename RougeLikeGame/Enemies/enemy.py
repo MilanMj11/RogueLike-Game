@@ -1,15 +1,18 @@
 import pygame
 import math
 from constants import *
+from healthbar import HealthBar
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, pos, size=(40, 40)):
+    def __init__(self, game, pos, health, size=(40, 40)):
         super().__init__()
         self.game = game
         self.position = list(pos)
         self.size = size
         self.speed = ENEMY_SPEED
         self.attackSpeed = ENEMY_ATTACK_SPEED
+        self.health = health
+        self.healthBar = HealthBar(self.health, self.health, self.position)
 
         self.image = None
         self.facing = "LEFT"
@@ -36,9 +39,12 @@ class Enemy(pygame.sprite.Sprite):
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
 
     def update(self):
-        pass
+        self.healthBar.update(self.health)
 
     def render(self, screen, offset=(0, 0)):
+
+        self.healthBar.render(screen, offset)
+
         if self.image != None:
             if self.facing == "RIGHT":
                 flippedImage = pygame.transform.flip(self.image, True, False)
