@@ -217,7 +217,7 @@ class LevelEditor:
 
     def render(self):
         self.virtual_screen.fill((100, 100, 100))
-        self.tilemap.render(self.virtual_screen, offset=self.render_camera)
+        self.tilemap.renderAll(self.virtual_screen, offset=self.render_camera)
 
         # highlight the chosen piece on the tilemap before applying it
         if self.ongrid == True and self.selectedImage != None:

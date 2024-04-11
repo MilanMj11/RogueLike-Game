@@ -7,6 +7,7 @@ from constants import *
 from projectile import Projectile
 
 NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]
+NEIGHBOURS_OFFSET_4 = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]]
 
 
 class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
@@ -69,6 +70,16 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         tiles = []
         playerTile = self.game.tilemap.getTile(int(self.position[1] / TILESIZE), int(self.position[0] / TILESIZE))
         for offset in NEIGHBOURS_OFFSET:
+            row = playerTile.row + offset[0]
+            col = playerTile.col + offset[1]
+            if row >= 0 and row < self.game.tilemap.height and col >= 0 and col < self.game.tilemap.width:
+                tiles.append(self.game.tilemap.getTile(row, col))
+        return tiles
+
+    def getTilesAround4(self):
+        tiles = []
+        playerTile = self.game.tilemap.getTile(int(self.position[1] / TILESIZE), int(self.position[0] / TILESIZE))
+        for offset in NEIGHBOURS_OFFSET_4:
             row = playerTile.row + offset[0]
             col = playerTile.col + offset[1]
             if row >= 0 and row < self.game.tilemap.height and col >= 0 and col < self.game.tilemap.width:
@@ -150,6 +161,14 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             self.movePlayer(divided_movement)
 
 
+    def handleEvents(self, eventList):
+        for event in eventList:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e:
+                    tilesAround = self.getTilesAround4()
+                    for tile in tilesAround:
+                        if tile.decorAssetPosition == [10, 3] or tile.decorAssetPosition == [11, 3]:
+                            self.game.gameStateManager.switchGameState("Lobby")
 
     def getDirectionInput(self):
         keys = pygame.key.get_pressed()

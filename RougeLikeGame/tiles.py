@@ -117,59 +117,6 @@ class TileMap:
             return self.tiles[row][col].type
         return None
 
-    def init_Tilemap_Lobby(self):
-        self.width = 33
-        self.height = 18
-
-        self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
-
-        for row in range(self.height):
-            for col in range(self.width):
-                self.tiles[row][col] = Tile(row, col, "floor")
-
-        for coords in LOBBY_WALLS:
-            self.setTile(coords[0], coords[1], "wall")
-        for coords in LOBBY_BLANKS:
-            self.setTile(coords[0], coords[1], "BLANK")
-
-        self.stylize_map()
-
-    def init_Tilemap_Dungeon_1(self):
-
-        self.height = 20
-        self.width = 20
-
-        self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
-
-        for row in range(self.height):
-            for col in range(self.width):
-                self.tiles[row][col] = Tile(row, col, "floor")
-
-        # making the outside full of 2-layer walls
-        for row in range(self.height):
-            self.setTile(row, 0, "wall")
-            self.setTile(row, self.width - 1, "wall")
-        for col in range(self.width):
-            self.setTile(0, col, "wall")
-            self.setTile(self.height - 1, col, "wall")
-
-        # making the inside walls
-        for row in range(1, self.height - 1):
-            self.setTile(row, 1, "wall")
-            self.setTile(row, self.width - 2, "wall")
-        for col in range(1, self.width - 1):
-            self.setTile(1, col, "wall")
-            self.setTile(self.height - 2, col, "wall")
-
-        for i in range(4):
-            for j in range(7):
-                self.setTile(5 + i, 5 + j, "wall")
-
-        for i in range(5):
-            for j in range(5):
-                self.setTile(9 + i, 9 + j, "wall")
-
-        self.stylize_map()
 
     def setCorrectAssetPosition(self, row, col):
         tile = self.getTile(row, col)
@@ -351,14 +298,13 @@ class TileMap:
     def getTile(self, row, col):
         return self.tiles[row][col]
 
-    '''
-    def render(self, screen, offset=(0, 0)):
+    def renderAll(self, screen, offset=(0, 0)):
         for row in range(self.height):
             for col in range(self.width):
                 tile = self.getTile(row, col)
                 if tile != None:
                     tile.render(screen, offset)
-    '''
+
     # optimized render
     def render(self, tile_pos, screen, offset=(0, 0)):
         # I want to render only the tiles that should be visible instead of all the tiles

@@ -5,11 +5,11 @@ import math
 from constants import *
 from Enemies.enemy import Enemy
 
-
 class SkeletonFighter(Enemy):
     def __init__(self, game, pos, size=(40, 40)):
         super().__init__(game, pos, size)
         self.image = pygame.image.load("assets/skeleton_fighter/skeletonFighter_frame1.png").convert_alpha()
+        self.image = pygame.transform.flip(self.image, True, False)
         self.image = pygame.transform.scale(self.image, size)
         # self.image.set_colorkey((100, 100, 100))
         self.health = SKELETON_FIGHTER_HEALTH

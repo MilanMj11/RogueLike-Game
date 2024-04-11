@@ -11,7 +11,7 @@ class GameController:
         self.virtual_screen = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.gameStateManager = GameStateManager("Dungeon 1")
+        self.gameStateManager = GameStateManager(self, "Lobby")
         self.running = True
         self.camera = [0, 0]
         self.render_camera = [0, 0]
@@ -28,7 +28,7 @@ class GameController:
 
     def startGame(self):
         # load the lobby as the first scene
-        self.loadDungeon1()
+        self.loadLobby()
 
     def loadLobby(self):
         self.Lobby = Lobby(self)
