@@ -17,7 +17,7 @@ class HealthBar:
         health_bar_x = self.position[0] - offset[0]
         health_bar_y = self.position[1] - offset[1] - 10
         health_bar_width = self.entitySize[0]
-        health_bar_height = 5
+        health_bar_height = 4
 
         # draw the health bar background
         pygame.draw.rect(screen, (255, 0, 0), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
