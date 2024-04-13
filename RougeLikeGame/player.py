@@ -43,11 +43,13 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.swing_animation_duration = 20
         self.swing_animation_timer = 0
 
-        self.sword_img = pygame.image.load("assets/sword_test.png").convert_alpha()
-        self.sword_img = pygame.transform.scale(self.sword_img, (20, 90))
-        self.sword_rect = self.sword_img.get_rect()
-        self.sword_angle = 0
+        # Swing animation variables
+        self.swing_current_frame = 0
+        self.swing_frame_delay = 50
+        self.swing_last_frame_time = 0
+        self.swing_angle = -60
 
+        self.attacked = False
         self.swinging = False
         self.attackDirection = [0, 0]
 
@@ -104,8 +106,43 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def update_AttackDirection(self, mousePos):
         self.attackDirection = mousePos
 
+    def damageEnemiesInSwingArea(self, attackDirection):
+
+        # get the direction of the meele attack
+        playerPos = SCREEN_WIDTH / 2 + self.size[0], SCREEN_HEIGHT / 2 + self.size[1]
+
+        direction = [attackDirection[0] - playerPos[0] + self.size[0], attackDirection[1] - playerPos[1] + self.size[1]]
+        length = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
+        normalized_vector = [direction[0] / length, direction[1] / length]
+
+        attack_direction = math.atan2(normalized_vector[1], normalized_vector[0])
+
+        # Iterate through each enemy
+        for enemy in self.game.enemiesList:
+
+            # Calculate distance between player and enemy
+            distance = math.sqrt((enemy.getRectMiddlePoint()[0] - self.getRectMiddlePoint()[0]) ** 2 + (
+                    enemy.getRectMiddlePoint()[1] - self.getRectMiddlePoint()[1]) ** 2) - enemy.size[0] / 2
+
+            # Calculate angle between player and enemy
+            enemy_direction = math.atan2(enemy.getRectMiddlePoint()[1] - self.getRectMiddlePoint()[1],
+                                         enemy.getRectMiddlePoint()[0] - self.getRectMiddlePoint()[0])
+
+            # Calculate the difference between the enemy's direction and the attack direction
+            angle_difference = abs(math.atan2(math.sin(enemy_direction - attack_direction),
+                                              math.cos(enemy_direction - attack_direction)))
+
+            # Check if the enemy is within melee range and within the attack arc
+            if distance <= self.melee_range and angle_difference <= math.pi / 3:
+                # Apply damage to the enemy
+                if enemy.gotAttacked == False:
+                    enemy.health -= self.melee_damage
+                    enemy.gotAttacked = True
+
+
     def meeleAttack(self):
         if pygame.mouse.get_pressed()[2]:
+
             mousePos = pygame.mouse.get_pos()
 
             self.update_AttackDirection(mousePos)
@@ -121,21 +158,6 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             self.swing_animation_timer = self.swing_animation_duration
             self.sword_angle = 0
 
-            for enemy in self.game.enemiesList:
-
-                # calculate distance between player and enemy
-                distance = math.sqrt((enemy.getRectMiddlePoint()[0] - self.getRectMiddlePoint()[0]) ** 2 + (
-                        enemy.getRectMiddlePoint()[1] - self.getRectMiddlePoint()[1]) ** 2) - enemy.size[0] / 2
-
-                if distance <= self.melee_range:
-                    enemy.health -= self.melee_damage
-
-            '''
-            for enemy in self.game.enemiesList:
-                if enemy.getRect().colliderect(pygame.Rect(melee_attack_position[0], melee_attack_position[1], 1, 1)):
-                    enemy.health -= self.melee_damage
-            '''
-
             return True
 
         return False
@@ -143,23 +165,34 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def draw_sword_animation(self, mouse_pos, screen, offset=(0, 0)):
         if self.swinging:
 
-            rotation_point = (self.position[0] + self.size[0] / 2 - offset[0],
-                              self.position[1] + self.size[1] / 2 - offset[1])
+            playerPos = SCREEN_WIDTH / 2 + self.size[0], SCREEN_HEIGHT / 2 + self.size[1]
 
-            rotated_sword = pygame.transform.rotate(self.sword_img, self.sword_angle)
+            direction_vector = [mouse_pos[0] - playerPos[0] + self.size[0], mouse_pos[1] - playerPos[1] + self.size[1]]
+            length = math.sqrt(direction_vector[0] ** 2 + direction_vector[1] ** 2)
+            normalized_vector = [direction_vector[0] / length, direction_vector[1] / length]
 
-            # rotated_rect = rotated_sword.get_rect()
+            angle = math.atan2(normalized_vector[1], normalized_vector[0])
 
-            self.sword_rect = rotated_sword.get_rect(bottomleft=(self.position[0] + self.size[0] / 2 - offset[0],
-                                                      self.position[1] + self.size[1] / 2 - offset[1]))
+            swing_angle_rad = math.radians(self.swing_angle)
 
-            screen.blit(rotated_sword, self.sword_rect)
+            rotated_vector = [math.cos(angle + swing_angle_rad), math.sin(angle + swing_angle_rad)]
 
-            self.sword_angle += 1
+            end_position = [self.position[0] + self.size[0] / 2 + rotated_vector[0] * self.melee_range,
+                            self.position[1] + self.size[1] / 2 + rotated_vector[1] * self.melee_range]
 
-            if self.sword_angle >= 120:
+
+            pygame.draw.line(screen, WHITE, (
+                self.position[0] + self.size[0] / 2 - offset[0], self.position[1] + self.size[1] / 2 - offset[1]),
+                             (end_position[0] - offset[0], end_position[1] - offset[1]), 10)
+
+            self.swing_angle += 8
+
+            if self.swing_angle > 60:
                 self.swinging = False
-                self.sword_angle = 0
+                self.swing_angle = -60
+
+
+
 
     def draw_swing_area(self, mouse_pos, screen, offset=(0, 0)):
         if self.swinging:
@@ -260,6 +293,16 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 if self.meeleAttack():
                     self.last_melee_attack_time = current_time
 
+        ''' If the player is not swinging the sword, then all the enemies will have their got attacked status reset'''
+        if self.swinging == False:
+            for enemy in self.game.enemiesList:
+                enemy.gotAttacked = False
+
+        ''' If the player is swinging the sword, then I will damage all the enemies in the swing area '''
+        if self.swinging == True:
+            self.damageEnemiesInSwingArea(self.attackDirection)
+
+
         self.update_animation(current_time)
 
         MOVEMENT_DIVISION_FACTOR = 1
@@ -301,7 +344,9 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
     def render(self, screen, offset=(0, 0)):
 
+
         self.draw_sword_animation(self.attackDirection, self.game.virtual_screen, offset=self.game.render_camera)
+        # self.draw_swing_area(self.attackDirection, self.game.virtual_screen, offset=self.game.render_camera)
         # self.draw_swing_area(self.attackDirection, self.game.virtual_screen, offset=self.game.render_camera)
 
         if self.facing == "LEFT":

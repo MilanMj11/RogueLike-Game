@@ -16,6 +16,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.image = None
         self.facing = "LEFT"
+        self.gotAttacked = False
 
     def getTilesAround(self):
         # get the tiles around the enemy
