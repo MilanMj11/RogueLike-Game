@@ -49,7 +49,7 @@ class Projectile(pygame.sprite.Sprite):
         # check if projectile touches an enemy
         for enemy in self.game.enemiesList:
             if self.getRect().colliderect(enemy.getRect()):
-                enemy.health -= self.damage
+                enemy.getDamaged(self.damage)
                 self.game.projectiles.remove(self)
                 return
 

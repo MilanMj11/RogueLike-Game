@@ -3,6 +3,7 @@ import math
 from constants import *
 from healthbar import HealthBar
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, game, pos, health, size=(40, 40)):
         super().__init__()
@@ -17,6 +18,17 @@ class Enemy(pygame.sprite.Sprite):
         self.image = None
         self.facing = "LEFT"
         self.gotAttacked = False
+
+        self.damageDisplayTimer = 0
+
+    def getDamaged(self, damage):
+        self.health -= damage
+        self.gotAttacked = True
+        position_copy = self.position.copy()
+        time_copy = self.game.clock.get_time()
+        self.game.damage_numbers.append((damage, position_copy, time_copy))
+        if self.health <= 0:
+            self.game.enemiesList.remove(self)
 
     def getTilesAround(self):
         # get the tiles around the enemy

@@ -26,6 +26,9 @@ class GameController:
         self.Lobby = None
         self.Dungeon1 = None
 
+        self.damage_numbers = []
+        self.font = pygame.font.Font("assets/Pixeltype.ttf", 20)
+
     def startGame(self):
         # load the lobby as the first scene
         self.loadDungeon1()
@@ -92,6 +95,14 @@ class GameController:
             if event.type == pygame.QUIT:
                 self.running = False
 
+    def renderDamageNumbers(self):
+        for damage in self.damage_numbers[:]:
+            if (self.clock.get_time() - damage[2]) >= 2:
+                self.damage_numbers.remove(damage)
+                continue
+            text = self.font.render(str(damage[0]), True, (255, 255, 255))
+            self.virtual_screen.blit(text, (damage[1][0] - self.render_camera[0], damage[1][1] - self.render_camera[1] - 20))
+
     def render(self):
 
         # --- Rendering the correct Scene based on the gameState ---
@@ -103,6 +114,8 @@ class GameController:
             self.Lobby.renderLobby()
 
         # --- Rendering the correct Scene based on the gameState ---
+
+        self.renderDamageNumbers()
 
         # scale the virutal screen onto the actual screen
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH, SCREEN_HEIGHT), self.screen)

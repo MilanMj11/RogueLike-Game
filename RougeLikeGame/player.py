@@ -136,8 +136,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             if distance <= self.melee_range and angle_difference <= math.pi / 3:
                 # Apply damage to the enemy
                 if enemy.gotAttacked == False:
-                    enemy.health -= self.melee_damage
-                    enemy.gotAttacked = True
+                    enemy.getDamaged(self.melee_damage)
 
 
     def meeleAttack(self):
