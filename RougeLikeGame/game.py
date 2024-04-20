@@ -11,6 +11,7 @@ class GameController:
         self.virtual_screen = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
+        self.start_time = pygame.time.get_ticks()
         self.gameStateManager = GameStateManager(self, "Dungeon 1")
         self.running = True
         self.camera = [0, 0]
@@ -78,6 +79,7 @@ class GameController:
             self.Lobby.updateLobby()
 
         self.clock.tick(FPS)
+        self.current_time = pygame.time.get_ticks()
         self.checkGameEvents()
         self.render()
 
@@ -97,11 +99,12 @@ class GameController:
 
     def renderDamageNumbers(self):
         for damage in self.damage_numbers[:]:
-            if (self.clock.get_time() - damage[2]) >= 2:
-                self.damage_numbers.remove(damage)
-                continue
-            text = self.font.render(str(damage[0]), True, (255, 255, 255))
-            self.virtual_screen.blit(text, (damage[1][0] - self.render_camera[0], damage[1][1] - self.render_camera[1] - 20))
+            if damage:
+                if (self.current_time - damage[2]) >= 550:
+                    self.damage_numbers.remove(damage)
+                    continue
+                text = self.font.render(str(damage[0]), True, (255, 255, 255))
+                self.virtual_screen.blit(text, (damage[1][0] - self.render_camera[0], damage[1][1] - self.render_camera[1] - 20))
 
     def render(self):
 

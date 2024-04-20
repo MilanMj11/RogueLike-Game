@@ -25,7 +25,7 @@ class Enemy(pygame.sprite.Sprite):
         self.health -= damage
         self.gotAttacked = True
         position_copy = self.position.copy()
-        time_copy = self.game.clock.get_time()
+        time_copy = pygame.time.get_ticks()
         self.game.damage_numbers.append((damage, position_copy, time_copy))
         if self.health <= 0:
             self.game.enemiesList.remove(self)

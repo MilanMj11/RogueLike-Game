@@ -73,7 +73,7 @@ class TileMap:
 
                 tile_decorAssetPosition = [int(tile_info[6][1:]), int(tile_info[7][:-1])]
 
-                self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition)
+                self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition, tilemap_type)
 
         # self.stylize_map()
 

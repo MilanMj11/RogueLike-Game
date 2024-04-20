@@ -292,14 +292,14 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 if self.meeleAttack():
                     self.last_melee_attack_time = current_time
 
-        ''' If the player is not swinging the sword, then all the enemies will have their got attacked status reset'''
-        if self.swinging == False:
-            for enemy in self.game.enemiesList:
-                enemy.gotAttacked = False
+            ''' If the player is not swinging the sword, then all the enemies will have their got attacked status reset'''
+            if self.swinging == False:
+                for enemy in self.game.enemiesList:
+                    enemy.gotAttacked = False
 
-        ''' If the player is swinging the sword, then I will damage all the enemies in the swing area '''
-        if self.swinging == True:
-            self.damageEnemiesInSwingArea(self.attackDirection)
+            ''' If the player is swinging the sword, then I will damage all the enemies in the swing area '''
+            if self.swinging == True:
+                self.damageEnemiesInSwingArea(self.attackDirection)
 
 
         self.update_animation(current_time)
