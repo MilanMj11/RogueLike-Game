@@ -20,6 +20,7 @@ class SkeletonFighter(Enemy):
         self.speed = SKELETON_FIGHTER_SPEED
         self.last_changeDirection_time = 0
         self.randomDirection = "UP"
+        self.xpValue = 50
 
     def seePlayer(self):
         # if the player is in the line of sight of the skeleton

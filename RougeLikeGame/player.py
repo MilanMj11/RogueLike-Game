@@ -5,6 +5,7 @@ import pygame
 import game
 from constants import *
 from projectile import Projectile
+from xp import *
 
 NEIGHBOURS_OFFSET = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]
 NEIGHBOURS_OFFSET_4 = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]]
@@ -55,6 +56,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
         self.projectileSpeed = 4
         self.projectileDamage = 10
+
+        self.experience = XP()
 
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),

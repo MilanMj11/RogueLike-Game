@@ -45,6 +45,7 @@ class Dungeon1:
         self.game.updatePlayer()
 
         self.game.updateProjectiles()
+        self.game.xpHUD.updateXPHUD()
 
         # check if player died
         if self.game.player.health <= 0:
@@ -71,3 +72,5 @@ class Dungeon1:
 
         for enemy in self.game.enemiesList:
             enemy.render(self.game.virtual_screen, offset=self.game.render_camera)
+
+        self.game.abilitiesHud.renderAbilitiesHud(self.game.virtual_screen)

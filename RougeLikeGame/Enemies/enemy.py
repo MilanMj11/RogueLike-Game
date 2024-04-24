@@ -20,6 +20,11 @@ class Enemy(pygame.sprite.Sprite):
         self.gotAttacked = False
 
         self.damageDisplayTimer = 0
+        self.xpValue = None
+
+    def getKilled(self):
+        self.game.enemiesList.remove(self)
+        self.game.player.experience.add_xp(self.xpValue)
 
     def getDamaged(self, damage):
         self.health -= damage
@@ -28,7 +33,7 @@ class Enemy(pygame.sprite.Sprite):
         time_copy = pygame.time.get_ticks()
         self.game.damage_numbers.append((damage, position_copy, time_copy))
         if self.health <= 0:
-            self.game.enemiesList.remove(self)
+            self.getKilled()
 
     def getTilesAround(self):
         # get the tiles around the enemy
