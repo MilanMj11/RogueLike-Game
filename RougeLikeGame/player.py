@@ -32,6 +32,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.facing = "RIGHT"
         self.game = game
         self.health = PLAYER_HEALTH
+        self.max_health = PLAYER_HEALTH
         self.speed = PLAYER_SPEED
         self.attackSpeed = PLAYER_ATTACK_SPEED
 

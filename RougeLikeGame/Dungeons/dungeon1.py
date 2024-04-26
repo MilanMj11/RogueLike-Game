@@ -46,6 +46,7 @@ class Dungeon1:
 
         self.game.updateProjectiles()
         self.game.xpHUD.updateXPHUD()
+        self.game.healthHUD.updateHealthHUD()
 
         # check if player died
         if self.game.player.health <= 0:
