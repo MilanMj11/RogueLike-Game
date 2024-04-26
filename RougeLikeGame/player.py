@@ -287,6 +287,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
         if self.game.gameStateManager.gameState != "Lobby":
 
+            self.game.abilitiesHud.updateAbilitiesHud(current_time)
+
             if current_time - self.last_projectile_time >= 1000 / self.attackSpeed:
                 if self.shootProjectile():
                     self.last_projectile_time = current_time
