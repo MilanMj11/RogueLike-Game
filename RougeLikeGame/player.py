@@ -87,6 +87,20 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def getRect(self):
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
 
+    def getTilesAroundClose(self):
+        # get the tiles around the player
+        tiles = []
+        # playerTile to be the tile where the player is standing with it's center
+        playerTile = self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
+                                               int((self.position[0] + self.size[0] / 2) / TILESIZE))
+
+        for offset in NEIGHBOURS_OFFSET:
+            row = playerTile.row + offset[0]
+            col = playerTile.col + offset[1]
+            if row >= 0 and row < self.game.tilemap.height and col >= 0 and col < self.game.tilemap.width:
+                tiles.append(self.game.tilemap.getTile(row, col))
+        return tiles
+
     def getTilesAround(self):
         # get the tiles around the player
         tiles = []
@@ -272,13 +286,24 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
                     self.position[1] = playerRect.y
 
+    def showInteractionsAvailable(self):
+        interactionButton = pygame.image.load("assets/interactionButtonE.png").convert_alpha()
+        interactionButton = pygame.transform.scale(interactionButton, (16, 16))
+
+        tilesAround = self.getTilesAroundClose()
+        for tile in tilesAround:
+            if tile.decorAssetPosition in [[10, 3], [11, 3], [5, 7], [7, 9], [0, 5]]:
+                position_x = tile.col * TILESIZE + TILESIZE / 2 - interactionButton.get_width() / 2
+                position_y = tile.row * TILESIZE - 12
+                self.game.virtual_screen.blit(interactionButton, (
+                position_x - self.game.render_camera[0], position_y - self.game.render_camera[1]))
+
     def update(self):
 
         ''' For testing , print the player tile coords '''
         # print(self.getTile().row, self.getTile().col)
 
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
-
         current_time = pygame.time.get_ticks()
 
         if self.game.gameStateManager.gameState != "Lobby":
@@ -315,7 +340,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         for event in eventList:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e:
-                    tilesAround = self.getTilesAround4()
+                    tilesAround = self.getTilesAround()
                     for tile in tilesAround:
                         # Here we check if the player is next to the door, so he can exit the dungeon
                         if tile.decorAssetPosition == [10, 3] or tile.decorAssetPosition == [11, 3]:
@@ -366,3 +391,5 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             screen.blit(flippedImage, (self.position[0] - offset[0], self.position[1] - offset[1]))
         else:
             screen.blit(self.image, (self.position[0] - offset[0], self.position[1] - offset[1]))
+
+        self.showInteractionsAvailable()
