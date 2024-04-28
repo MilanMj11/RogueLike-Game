@@ -8,7 +8,7 @@ class HealthHUD:
         self.font = pygame.font.Font("assets/Pixeltype.ttf", 30)
         self.HUD = pygame.Surface((HEALTH_HUD_WIDTH, HEALTH_HUD_HEIGHT), pygame.SRCALPHA)
 
-        self.image = pygame.image.load("assets/health_hud_var2.png").convert_alpha()
+        self.image = pygame.image.load("assets/huds/health_hud_var2.png").convert_alpha()
         self.image.set_colorkey((100, 100, 100))
         #
         self.green_bar = pygame.rect.Rect((1, 1, HEALTH_HUD_WIDTH - 2, HEALTH_HUD_HEIGHT - 2))

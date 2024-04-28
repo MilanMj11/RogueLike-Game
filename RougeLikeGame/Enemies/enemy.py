@@ -25,6 +25,7 @@ class Enemy(pygame.sprite.Sprite):
     def getKilled(self):
         self.game.enemiesList.remove(self)
         self.game.player.experience.add_xp(self.xpValue)
+        self.game.player.coins += 10
 
     def getDamaged(self, damage):
         self.health -= damage

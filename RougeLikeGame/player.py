@@ -59,6 +59,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.projectileDamage = 10
 
         self.experience = XP()
+        self.coins = 0
 
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),

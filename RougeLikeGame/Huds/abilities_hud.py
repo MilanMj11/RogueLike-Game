@@ -7,7 +7,7 @@ class AbilitiesHud:
         self.HUD_SURF = pygame.Surface((ABILITIES_HUD_WIDTH, ABILITIES_HUD_HEIGHT), pygame.SRCALPHA)
         self.timer_surface = pygame.Surface((ABILITIES_HUD_WIDTH, ABILITIES_HUD_HEIGHT), pygame.SRCALPHA)
 
-        self.image = pygame.image.load("assets/abilities_hud.png").convert_alpha()
+        self.image = pygame.image.load("assets/huds/abilities_hud.png").convert_alpha()
         self.image.set_colorkey((100, 100, 100))
 
         self.abilitiesImages = [pygame.image.load("assets/abilities/fireBallAbilityImage.png").convert_alpha(),

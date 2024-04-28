@@ -3,9 +3,10 @@ from tiles import *
 from gameStateManager import GameStateManager
 from Lobby.lobby import Lobby
 from Dungeons.dungeon1 import Dungeon1
-from abilities_hud import AbilitiesHud
-from xp import *
-from healthHUD import HealthHUD
+from Huds.abilities_hud import AbilitiesHud
+from Huds.xp_hud import XPHUD
+from Huds.health_hud import HealthHUD
+from Huds.coins_hud import CoinsHUD
 
 class GameController:
     def __init__(self):
@@ -35,6 +36,7 @@ class GameController:
         self.abilitiesHud = AbilitiesHud(self)
         self.xpHUD = XPHUD(self, self.player.experience)
         self.healthHUD = HealthHUD(self)
+        self.coinsHUD = CoinsHUD(self)
 
     def startGame(self):
         # load the lobby as the first scene
@@ -127,6 +129,7 @@ class GameController:
         self.renderDamageNumbers()
         self.xpHUD.renderXPHUD(self.virtual_screen)
         self.healthHUD.renderHealthHUD(self.virtual_screen)
+        self.coinsHUD.renderCoinsHUD(self.virtual_screen)
 
         # scale the virutal screen onto the actual screen
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH, SCREEN_HEIGHT), self.screen)
