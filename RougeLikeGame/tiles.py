@@ -3,17 +3,17 @@ import random
 import pygame
 from constants import *
 
-
 DirectionOFFSET4 = [[0, -1], [0, 1], [-1, 0], [1, 0]]
 
 
 class TileMap:
-    def __init__(self, width=10, height=10):
+    def __init__(self, width=10, height=10, tilemap_type="desert"):
         self.width = width
         self.height = height
         self.tile_size = TILESIZE
         self.tiles = [[None for col in range(self.width)] for row in range(self.height)]
         self.last_randomSet_tile_ind = 0
+        self.tilemap_type = tilemap_type
 
     def returnInformation(self):
         return (self.width, self.height, self.tile_size)
@@ -73,7 +73,8 @@ class TileMap:
 
                 tile_decorAssetPosition = [int(tile_info[6][1:]), int(tile_info[7][:-1])]
 
-                self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition, tilemap_type)
+                self.loadTile(tile_row, tile_col, tile_type, tile_assetPosition, tile_rotation, tile_decorAssetPosition,
+                              tilemap_type)
 
         # self.stylize_map()
 
@@ -116,7 +117,6 @@ class TileMap:
         if self.interior(row, col) and self.tiles[row][col] != None:
             return self.tiles[row][col].type
         return None
-
 
     def setCorrectAssetPosition(self, row, col):
         tile = self.getTile(row, col)
@@ -344,12 +344,28 @@ class Tile(pygame.sprite.Sprite):
         self.decorImage = None
         self.decorAssetPosition = [-1, -1]
 
+    def updateDecorAssetPosition(self, assetPosition, tilemap_type="desert"):
+        self.decorAssetPosition = assetPosition
+        self.updateDecorImage(tilemap_type)
+
+    def updateDecorImage(self, tilemap_type="desert"):
+        if self.decorAssetPosition == [-1, -1]:
+            self.decorImage = None
+
+        if self.decorAssetPosition != [-1, -1]:
+            decorImage = pygame.image.load(
+                "assets/tilemap/Tilemap/" + tilemap_type + "_tilemap_packed.png").convert_alpha()
+            decor_surface = decorImage.subsurface(
+                pygame.Rect(self.decorAssetPosition[0] * 16, self.decorAssetPosition[1] * 16, 16, 16))
+            decorImage = pygame.transform.scale(decor_surface, (TILESIZE, TILESIZE))
+            self.decorImage = decorImage
+
     def returnInformation(self):
         if self != None:
             return (self.row, self.col, self.type, self.assetPosition, self.rotation, self.decorAssetPosition)
 
     def getRect(self):
-        return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, TILESIZE , TILESIZE)
+        return pygame.Rect(self.col * TILESIZE, self.row * TILESIZE, TILESIZE, TILESIZE)
 
     def initImage(self, tilemap_type="desert"):
         if self.type == "BLANK":

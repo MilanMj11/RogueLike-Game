@@ -143,10 +143,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 if enemy.gotAttacked == False:
                     enemy.getDamaged(self.melee_damage)
 
-
     def meeleAttack(self):
         if pygame.mouse.get_pressed()[2]:
-
             mousePos = pygame.mouse.get_pos()
 
             self.update_AttackDirection(mousePos)
@@ -184,7 +182,6 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             end_position = [self.position[0] + self.size[0] / 2 + rotated_vector[0] * self.melee_range,
                             self.position[1] + self.size[1] / 2 + rotated_vector[1] * self.melee_range]
 
-
             pygame.draw.line(screen, WHITE, (
                 self.position[0] + self.size[0] / 2 - offset[0], self.position[1] + self.size[1] / 2 - offset[1]),
                              (end_position[0] - offset[0], end_position[1] - offset[1]), 10)
@@ -194,9 +191,6 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             if self.swing_angle > 60:
                 self.swinging = False
                 self.swing_angle = -60
-
-
-
 
     def draw_swing_area(self, mouse_pos, screen, offset=(0, 0)):
         if self.swinging:
@@ -308,7 +302,6 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             if self.swinging == True:
                 self.damageEnemiesInSwingArea(self.attackDirection)
 
-
         self.update_animation(current_time)
 
         MOVEMENT_DIVISION_FACTOR = 1
@@ -324,8 +317,21 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 if event.key == pygame.K_e:
                     tilesAround = self.getTilesAround4()
                     for tile in tilesAround:
+                        # Here we check if the player is next to the door, so he can exit the dungeon
                         if tile.decorAssetPosition == [10, 3] or tile.decorAssetPosition == [11, 3]:
                             self.game.gameStateManager.switchGameState("Lobby")
+                        # Here we check if the player is next to the chest, so he can open it
+                        if tile.decorAssetPosition == [5, 7]:
+                            self.coins += 100
+                            tile.updateDecorAssetPosition([7, 7], self.game.tilemap.tilemap_type)
+                        # Here we check if the player collects a health potion
+                        if tile.decorAssetPosition == [7, 9]:
+                            # Player can drink potion only if he is not at full health
+                            if self.health < self.max_health:
+                                self.health += int(self.max_health * 0.2)
+                                if self.health > self.max_health:
+                                    self.health = self.max_health
+                                tile.updateDecorAssetPosition([-1, -1], self.game.tilemap.tilemap_type)
 
     def getDirectionInput(self):
         keys = pygame.key.get_pressed()
@@ -349,7 +355,6 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         return movement
 
     def render(self, screen, offset=(0, 0)):
-
 
         self.draw_sword_animation(self.attackDirection, self.game.virtual_screen, offset=self.game.render_camera)
         # self.draw_swing_area(self.attackDirection, self.game.virtual_screen, offset=self.game.render_camera)
