@@ -46,13 +46,28 @@ class GameController:
         # load the lobby as the first scene
         # self.loadDungeon1()
 
+    def loadHuds(self):
+        # self.abilitiesHud.loadAbilitiesHud()
+        self.xpHUD.updateXPHUD()
+        self.healthHUD.updateHealthHUD()
+        self.coinsHUD.updateCoinsHUD()
+
     def loadLobby(self):
         self.Lobby = Lobby(self)
         self.Lobby.init_Lobby()
+        self.loadHuds()
 
     def loadDungeon1(self):
         self.Dungeon1 = Dungeon1(self)
         self.Dungeon1.init_Dungeon_1()
+        self.loadHuds()
+
+    def renderLoadingScreen(self):
+        loadingScreenImg = pygame.image.load("assets/menus/LoadingScreenExample.png")
+        loadingScreenImg = pygame.transform.scale(loadingScreenImg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen.blit(loadingScreenImg, (0, 0))
+        pygame.display.flip()
+        # pygame.time.wait(1000)
 
     def updatePlayer(self):
         # update the player

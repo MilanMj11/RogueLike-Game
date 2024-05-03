@@ -384,6 +384,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                         # Here we check if the player is next to the door, so he can exit the dungeon
                         if tile.decorAssetPosition == [10, 3] or tile.decorAssetPosition == [11, 3]:
                             self.game.gameStateManager.switchGameState("Lobby")
+                            break
                         # Here we check if the player is next to the chest, so he can open it
                         if tile.decorAssetPosition == [5, 7]:
                             self.coins += 100

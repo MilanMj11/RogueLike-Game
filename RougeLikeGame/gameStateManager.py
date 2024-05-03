@@ -19,6 +19,8 @@ class GameStateManager:
         if gameState == "Menu":
             self.game.menu.changeType("Start Menu")
 
+        self.game.renderLoadingScreen()
+
         if gameState == "Lobby":
             self.game.loadLobby()
         if gameState == "Dungeon 1":
