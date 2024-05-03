@@ -12,4 +12,9 @@ class XP:
             self.level += 1
             self.xp = 0
             # print(f"Level up! You are now level {self.level}")
+    def to_json(self):
+        return {
+            'xp': self.xp,
+            'level': self.level
+        }
 

@@ -1,0 +1,19 @@
+{
+    "MAX HEALTH": 100,
+    "SPEED": 8,
+    "ATTACK SPEED": 1,
+    "XP": {
+        "xp": 0,
+        "level": 2
+    },
+    "PROJECTILE": {
+        "SPEED": 6,
+        "DAMAGE": 10,
+        "IMAGE_FILE": "assets/projectile.png"
+    },
+    "MELEE": {
+        "RANGE": 70,
+        "DAMAGE": 15
+    },
+    "COINS": 120
+}

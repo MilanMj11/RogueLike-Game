@@ -1,3 +1,4 @@
+import json
 import math
 import time
 import pygame
@@ -36,6 +37,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.speed = PLAYER_SPEED
         self.attackSpeed = PLAYER_ATTACK_SPEED
 
+        self.projectileImageFile = "assets/projectile.png"
         self.initProjectileImage()
         self.last_projectile_time = 0
 
@@ -55,11 +57,48 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.swinging = False
         self.attackDirection = [0, 0]
 
-        self.projectileSpeed = 4
+        self.projectileSpeed = 6
         self.projectileDamage = 10
 
         self.experience = XP()
         self.coins = 0
+
+    def savePlayer(self):
+        directory = 'Saves/'
+        file = open(directory + 'save1.json', 'w')
+
+        data = {}
+        data['MAX HEALTH'] = self.max_health
+        data['SPEED'] = self.speed
+        data['ATTACK SPEED'] = self.attackSpeed
+        data['XP'] = self.experience.to_json()
+        data['PROJECTILE'] = {"SPEED": self.projectileSpeed, "DAMAGE": self.projectileDamage, "IMAGE_FILE": self.projectileImageFile}
+        data['MELEE'] = {"RANGE": self.melee_range, "DAMAGE": self.melee_damage}
+        data['COINS'] = self.coins
+
+        json_data = json.dumps(data, indent=4)
+
+        file.write(json_data)
+
+    def loadPlayer(self):
+        directory = 'Saves/'
+        file = open(directory + 'save1.json', 'r')
+        data = json.load(file)
+
+        self.max_health = data['MAX HEALTH']
+        self.health = self.max_health
+        self.speed = data['SPEED']
+        self.attackSpeed = data['ATTACK SPEED']
+        self.experience.xp = data['XP']['xp']
+        self.experience.level = data['XP']['level']
+        self.coins = data['COINS']
+
+        self.projectileSpeed = data['PROJECTILE']['SPEED']
+        self.projectileDamage = data['PROJECTILE']['DAMAGE']
+        self.projectileImageFile = data['PROJECTILE']['IMAGE_FILE']
+
+        self.melee_range = data['MELEE']['RANGE']
+        self.melee_damage = data['MELEE']['DAMAGE']
 
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
@@ -80,7 +119,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
             self.last_frame_time = current_time
 
     def initProjectileImage(self):
-        self.projectileImage = pygame.image.load("assets/projectile.png").convert_alpha()
+        self.projectileImage = pygame.image.load(self.projectileImageFile).convert_alpha()
         self.projectileImage = pygame.transform.scale(self.projectileImage, (32, 32))
         self.projectileImage.set_colorkey((100, 100, 100))
 

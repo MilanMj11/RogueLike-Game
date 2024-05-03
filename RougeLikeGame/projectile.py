@@ -22,6 +22,8 @@ class Projectile(pygame.sprite.Sprite):
 
     def setImage(self, image, size=(20, 20)):
         self.image = pygame.transform.scale(image, size)
+        self.image.convert_alpha()
+        self.image.set_colorkey((100, 100, 100))
 
     def getTilesAround(self):
         tiles = []

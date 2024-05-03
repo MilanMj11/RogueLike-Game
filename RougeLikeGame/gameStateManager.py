@@ -12,6 +12,13 @@ class GameStateManager:
         self.previousGameState = self.gameState
         self.gameState = gameState
 
+        if "Dungeon" in gameState:
+            self.game.menu.changeType("In Game Menu")
+        if gameState == "Lobby":
+            self.game.menu.changeType("Lobby Menu")
+        if gameState == "Menu":
+            self.game.menu.changeType("Start Menu")
+
         if gameState == "Lobby":
             self.game.loadLobby()
         if gameState == "Dungeon 1":

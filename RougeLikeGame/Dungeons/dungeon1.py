@@ -20,6 +20,9 @@ class Dungeon1:
         self.game.tilemap.load("Dungeons/dungeon1_map.txt")
 
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
+
+        self.game.player.loadPlayer()
+
         self.game.player.speed = 3
 
     def checkDungeon1GameEvents(self, eventList):

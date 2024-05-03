@@ -7,6 +7,7 @@ from Huds.abilities_hud import AbilitiesHud
 from Huds.xp_hud import XPHUD
 from Huds.health_hud import HealthHUD
 from Huds.coins_hud import CoinsHUD
+from menu import Menu
 
 class GameController:
     def __init__(self):
@@ -15,7 +16,7 @@ class GameController:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.start_time = pygame.time.get_ticks()
-        self.gameStateManager = GameStateManager(self, "Dungeon 1")
+        self.gameStateManager = GameStateManager(self, "Menu")
         self.running = True
         self.camera = [0, 0]
         self.render_camera = [0, 0]
@@ -38,23 +39,28 @@ class GameController:
         self.healthHUD = HealthHUD(self)
         self.coinsHUD = CoinsHUD(self)
 
+        self.menu = Menu(self, "Start Menu")
+
     def startGame(self):
+        pass
         # load the lobby as the first scene
-        self.loadDungeon1()
+        # self.loadDungeon1()
 
     def loadLobby(self):
         self.Lobby = Lobby(self)
         self.Lobby.init_Lobby()
-        self.player.health = PLAYER_HEALTH
 
     def loadDungeon1(self):
         self.Dungeon1 = Dungeon1(self)
         self.Dungeon1.init_Dungeon_1()
-        self.player.health = PLAYER_HEALTH
 
     def updatePlayer(self):
         # update the player
         self.player.update()
+        '''
+        FOR TESTING PURPOSES ONLY, REMOVE LATER 
+        '''
+        self.player.savePlayer()
 
     def updateProjectiles(self):
         # update each projectile present in the game
@@ -95,6 +101,9 @@ class GameController:
 
         eventList = pygame.event.get()
 
+        if self.gameStateManager.gameState == "Menu":
+            self.menu.handleEvents(eventList)
+
         if self.gameStateManager.gameState == "Lobby":
             self.Lobby.checkLobbyGameEvents(eventList)
 
@@ -118,6 +127,9 @@ class GameController:
 
         # --- Rendering the correct Scene based on the gameState ---
 
+        if self.gameStateManager.gameState == "Menu":
+            self.menu.render(self.virtual_screen)
+
         if self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.renderDungeon1()
 
@@ -126,10 +138,13 @@ class GameController:
 
         # --- Rendering the correct Scene based on the gameState ---
 
-        self.renderDamageNumbers()
-        self.xpHUD.renderXPHUD(self.virtual_screen)
-        self.healthHUD.renderHealthHUD(self.virtual_screen)
-        self.coinsHUD.renderCoinsHUD(self.virtual_screen)
+        if self.gameStateManager.gameState != "Menu":
+            self.renderDamageNumbers()
+            self.xpHUD.renderXPHUD(self.virtual_screen)
+            self.coinsHUD.renderCoinsHUD(self.virtual_screen)
+
+            if self.gameStateManager.gameState != "Lobby":
+                self.healthHUD.renderHealthHUD(self.virtual_screen)
 
         # scale the virutal screen onto the actual screen
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH, SCREEN_HEIGHT), self.screen)

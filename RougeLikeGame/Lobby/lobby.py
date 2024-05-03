@@ -14,6 +14,9 @@ class Lobby:
         self.game.tilemap = TileMap(100, 100)
         self.game.tilemap.load("Lobby/lobby_map.txt", "lobby")
         self.game.player.position = [14 * TILESIZE, 15 * TILESIZE]
+
+        self.game.player.loadPlayer()
+
         self.game.player.speed = 8
 
     def checkLobbyGameEvents(self, eventList):
