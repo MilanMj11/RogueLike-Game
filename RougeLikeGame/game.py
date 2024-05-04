@@ -118,7 +118,7 @@ class GameController:
             self.clock.tick(FPS)
             if self.clock.get_time() < 100:
                 self.current_time += self.clock.get_time()
-            print(self.current_time)
+            # print(self.current_time)
 
         self.checkGameEvents()
         self.render()
