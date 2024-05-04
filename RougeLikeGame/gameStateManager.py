@@ -8,7 +8,7 @@ class GameStateManager:
         self.previousGameState = None
         self.game = game
 
-    def switchGameState(self, gameState):
+    def switchGameState(self, gameState, menuType=None):
         self.previousGameState = self.gameState
         self.gameState = gameState
 
@@ -17,7 +17,10 @@ class GameStateManager:
         if gameState == "Lobby":
             self.game.menu.changeType("Lobby Menu")
         if gameState == "Menu":
-            self.game.menu.changeType("Start Menu")
+            if menuType == "Start Menu":
+                self.game.menu.changeType("Start Menu")
+            if menuType == "Pause Menu":
+                self.game.menu.changeType("Pause Menu")
 
         self.game.renderLoadingScreen()
 

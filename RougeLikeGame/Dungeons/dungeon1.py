@@ -29,14 +29,12 @@ class Dungeon1:
         self.game.player.handleEvents(eventList)
         for event in eventList:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_e:
-                    if self.game.player.getTile().row == 1 and self.game.player.getTile().col == 1:
-                        self.game.gameStateManager.switchGameState("Lobby")
-                        self.game.loadLobby()
+                if event.key == pygame.K_ESCAPE:
+                    self.game.gameStateManager.switchGameState("Menu", "Pause Menu")
 
     def spawnSkeletonFighter(self):
 
-        current_time = pygame.time.get_ticks()
+        current_time = self.game.current_time
 
         if current_time - self.game.lastSkeletonFighterSpawn > 5000:
             self.game.lastSkeletonFighterSpawn = current_time

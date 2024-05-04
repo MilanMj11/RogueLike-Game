@@ -31,7 +31,7 @@ class Enemy(pygame.sprite.Sprite):
         self.health -= damage
         self.gotAttacked = True
         position_copy = self.position.copy()
-        time_copy = pygame.time.get_ticks()
+        time_copy = self.game.current_time
         self.game.damage_numbers.append((damage, position_copy, time_copy))
         if self.health <= 0:
             self.getKilled()

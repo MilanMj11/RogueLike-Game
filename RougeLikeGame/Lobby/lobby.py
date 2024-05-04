@@ -24,6 +24,8 @@ class Lobby:
                 if event.key == pygame.K_e:
                     if self.game.player.getTile().decorAssetPosition == [0, 5]:
                         self.game.gameStateManager.switchGameState("Dungeon 1")
+                if event.key == pygame.K_ESCAPE:
+                    self.game.gameStateManager.switchGameState("Menu", "Start Menu")
 
     def updateLobby(self):
         self.game.updatePlayer()

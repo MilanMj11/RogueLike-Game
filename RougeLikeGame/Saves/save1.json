@@ -1,10 +1,10 @@
 {
     "MAX HEALTH": 100,
-    "SPEED": 8,
+    "SPEED": 3,
     "ATTACK SPEED": 1,
     "XP": {
-        "xp": 50,
-        "level": 3
+        "xp": 700,
+        "level": 28
     },
     "PROJECTILE": {
         "SPEED": 6,
@@ -15,5 +15,5 @@
         "RANGE": 70,
         "DAMAGE": 15
     },
-    "COINS": 570
+    "COINS": 8200
 }

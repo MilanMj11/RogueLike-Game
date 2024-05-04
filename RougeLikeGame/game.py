@@ -20,6 +20,8 @@ class GameController:
         self.running = True
         self.camera = [0, 0]
         self.render_camera = [0, 0]
+        self.current_time = 0
+        self.paused_time = 0
 
         self.background = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.background.fill((0, 0, 0))
@@ -71,7 +73,7 @@ class GameController:
 
     def updatePlayer(self):
         # update the player
-        self.player.update()
+        self.player.update(self.current_time)
         '''
         FOR TESTING PURPOSES ONLY, REMOVE LATER 
         '''
@@ -101,14 +103,23 @@ class GameController:
             pygame.quit()
             quit()
 
+        #if self.gameStateManager.gameState == "Menu":
+        #    self.paused_time = pygame.time.get_ticks()
+
         if self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.updateDungeon1()
 
-        if self.gameStateManager.gameState == "Lobby":
+        elif self.gameStateManager.gameState == "Lobby":
             self.Lobby.updateLobby()
 
-        self.clock.tick(FPS)
-        self.current_time = pygame.time.get_ticks()
+        # I don't want the clock to be ticking when in the menu
+        # As I could exploit the time
+        if self.gameStateManager.gameState != "Menu":
+            self.clock.tick(FPS)
+            if self.clock.get_time() < 100:
+                self.current_time += self.clock.get_time()
+            print(self.current_time)
+
         self.checkGameEvents()
         self.render()
 
@@ -119,10 +130,10 @@ class GameController:
         if self.gameStateManager.gameState == "Menu":
             self.menu.handleEvents(eventList)
 
-        if self.gameStateManager.gameState == "Lobby":
+        elif self.gameStateManager.gameState == "Lobby":
             self.Lobby.checkLobbyGameEvents(eventList)
 
-        if self.gameStateManager.gameState == "Dungeon 1":
+        elif self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.checkDungeon1GameEvents(eventList)
 
         for event in eventList:
