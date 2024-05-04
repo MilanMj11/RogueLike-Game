@@ -15,7 +15,7 @@ class Menu:
 
     def loadMenu(self):
         if self.type == "Start Menu":
-            self.image = pygame.image.load("assets/menus/StartMenuExample.png")
+            self.image = pygame.image.load("assets/menus/StartMenuImageExample.png")
         if self.type == "Pause Menu":
             self.image = pygame.image.load("assets/menus/PauseMenuExample.png")
 
@@ -24,7 +24,7 @@ class Menu:
             for event in eventList:
                 # if clicking on Continue button
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if 338 < int(event.pos[0]/SCALING_FACTOR) < 676 and 214 < int(event.pos[1]/SCALING_FACTOR) < 268:
+                    if 48 < int(event.pos[0]/SCALING_FACTOR) < 371 and 196 < int(event.pos[1]/SCALING_FACTOR) < 274:
                         # self.game.renderLoadingScreen()
                         self.game.gameStateManager.switchGameState("Lobby")
         if self.type == "Pause Menu":
