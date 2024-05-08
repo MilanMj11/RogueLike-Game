@@ -100,6 +100,23 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.melee_range = data['MELEE']['RANGE']
         self.melee_damage = data['MELEE']['DAMAGE']
 
+    def loadNewPlayer(self):
+
+        self.max_health = 100
+        self.health = self.max_health
+        self.speed = PLAYER_SPEED
+        self.attackSpeed = PLAYER_ATTACK_SPEED
+        self.experience.xp = 0
+        self.experience.level = 1
+        self.coins = 0
+
+        self.projectileSpeed = 6
+        self.projectileDamage = 10
+        self.projectileImageFile = "assets/projectile.png"
+
+        self.melee_range = 70
+        self.melee_damage = 15
+
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
                                          int((self.position[0] + self.size[0] / 2) / TILESIZE))
@@ -340,7 +357,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def update(self, current_time):
 
         ''' For testing , print the player tile coords '''
-        print(self.getTile().row, self.getTile().col)
+        # print(self.getTile().row, self.getTile().col)
 
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
 

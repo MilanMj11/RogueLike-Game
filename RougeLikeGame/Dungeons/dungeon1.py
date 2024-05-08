@@ -22,10 +22,9 @@ class Dungeon1:
         self.game.tilemap = TileMap(100, 100)
         self.game.tilemap.load("Dungeons/dungeon1_map.txt")
 
+        #self.game.player.loadPlayer()
+
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
-
-        self.game.player.loadPlayer()
-
         self.game.player.speed = 3
 
     def checkDungeon1GameEvents(self, eventList):
@@ -33,7 +32,7 @@ class Dungeon1:
         for event in eventList:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.game.gameStateManager.switchGameState("Menu", "Pause Menu")
+                    self.game.gameStateManager.switchGameState("Menu", "Pause Menu Dungeon")
 
     def spawnSkeletonFighters(self, spawnerNr, x, y, size=4, totalSpawns = 10):
         # This function acts like a Spawner, that constantly spawns enemies

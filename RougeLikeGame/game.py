@@ -1,3 +1,5 @@
+import json
+
 from player import Player
 from tiles import *
 from gameStateManager import GameStateManager
@@ -8,6 +10,7 @@ from Huds.xp_hud import XPHUD
 from Huds.health_hud import HealthHUD
 from Huds.coins_hud import CoinsHUD
 from menu import Menu
+
 
 class GameController:
     def __init__(self):
@@ -43,8 +46,42 @@ class GameController:
 
         self.menu = Menu(self, "Start Menu")
 
+        self.currentDungeon = 1
+        self.currentRegion = "Desert"
+
+    def saveGame(self):
+        self.player.savePlayer()
+
+        directory = "Saves/"
+        file = open(directory + 'gameSave1.json', 'w')
+
+        data = {}
+        data['CURRENT_DUNGEON'] = self.currentDungeon
+        data['CURRENT_REGION'] = self.currentRegion
+
+        json_data = json.dumps(data, indent=4)
+        file.write(json_data)
+
+    def loadGame(self):
+        directory = "Saves/"
+        file = open(directory + 'gameSave1.json', 'r')
+        data = json.load(file)
+
+        self.currentDungeon = data['CURRENT_DUNGEON']
+        self.currentRegion = data['CURRENT_REGION']
+
+        self.player.loadPlayer()
+
+    def loadNewGame(self):
+        self.currentDungeon = 1
+        self.currentRegion = "Desert"
+
+        self.player.loadNewPlayer()
+
     def startGame(self):
         pass
+        # self.loadGame()
+
         # load the lobby as the first scene
         # self.loadDungeon1()
 
@@ -77,7 +114,7 @@ class GameController:
         '''
         FOR TESTING PURPOSES ONLY, REMOVE LATER 
         '''
-        self.player.savePlayer()
+        # self.player.savePlayer()
 
     def updateProjectiles(self):
         # update each projectile present in the game
@@ -103,7 +140,7 @@ class GameController:
             pygame.quit()
             quit()
 
-        #if self.gameStateManager.gameState == "Menu":
+        # if self.gameStateManager.gameState == "Menu":
         #    self.paused_time = pygame.time.get_ticks()
 
         if self.gameStateManager.gameState == "Dungeon 1":
@@ -147,7 +184,8 @@ class GameController:
                     self.damage_numbers.remove(damage)
                     continue
                 text = self.font.render(str(damage[0]), True, (255, 255, 255))
-                self.virtual_screen.blit(text, (damage[1][0] - self.render_camera[0], damage[1][1] - self.render_camera[1] - 20))
+                self.virtual_screen.blit(text, (
+                damage[1][0] - self.render_camera[0], damage[1][1] - self.render_camera[1] - 20))
 
     def render(self):
 

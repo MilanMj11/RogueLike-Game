@@ -16,8 +16,10 @@ class Menu:
     def loadMenu(self):
         if self.type == "Start Menu":
             self.image = pygame.image.load("assets/menus/StartMenuImageExample.png")
-        if self.type == "Pause Menu":
+        if self.type == "Pause Menu Dungeon":
             self.image = pygame.image.load("assets/menus/PauseMenuExample.png")
+        if self.type == "Pause Menu Lobby":
+            self.image = pygame.image.load("assets/menus/PauseMenuLobbyExample.png")
 
     def handleEvents(self, eventList):
         if self.type == "Start Menu":
@@ -25,14 +27,34 @@ class Menu:
                 # if clicking on Continue button
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if 48 < int(event.pos[0]/SCALING_FACTOR) < 371 and 196 < int(event.pos[1]/SCALING_FACTOR) < 274:
-                        # self.game.renderLoadingScreen()
+                        # CONTINUE BUTTON -> Loads the last save.
+                        self.game.loadGame()
                         self.game.gameStateManager.switchGameState("Lobby")
-        if self.type == "Pause Menu":
+                    if 48 < int(event.pos[0]/SCALING_FACTOR) < 371 and 300 < int(event.pos[1]/SCALING_FACTOR) < 382:
+                        # NEW GAME BUTTON -> Loads new run.
+                        self.game.loadNewGame()
+                        self.game.gameStateManager.switchGameState("Lobby")
+                    if 48 < int(event.pos[0]/SCALING_FACTOR) < 371 and 406 < int(event.pos[1]/SCALING_FACTOR) < 488:
+                        # QUIT BUTTON -> Quits the game.
+                        pygame.quit()
+
+        if self.type == "Pause Menu Dungeon":
             for event in eventList:
                 # if clicking Escape again brings u back to the dungeon
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.game.gameStateManager.gameState = self.game.gameStateManager.previousGameState
+        if self.type == "Pause Menu Lobby":
+            for event in eventList:
+                # if clicking Escape again brings u back to the lobby
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.game.gameStateManager.gameState = self.game.gameStateManager.previousGameState
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if 300 < int(event.pos[0]/SCALING_FACTOR) < 700 and 10 < int(event.pos[1]/SCALING_FACTOR) < 400:
+                        # self.game.renderLoadingScreen()
+                        self.game.saveGame()
+                        self.game.gameStateManager.switchGameState("Menu", "Start Menu")
 
     def update(self):
         pass
