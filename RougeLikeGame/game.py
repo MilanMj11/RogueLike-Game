@@ -46,7 +46,9 @@ class GameController:
 
         self.menu = Menu(self, "Start Menu")
 
+        # -> Each region has 3 dungeons
         self.currentDungeon = 1
+        # -> There are 4 regions: Desert, Forest, Ice, Lava
         self.currentRegion = "Desert"
 
     def saveGame(self):
@@ -84,6 +86,22 @@ class GameController:
 
         # load the lobby as the first scene
         # self.loadDungeon1()
+
+    def progressToNextDungeonAndSave(self):
+        self.currentDungeon += 1
+        if self.currentDungeon > 3:
+            self.currentDungeon = 1
+            if self.currentRegion == "Desert":
+                self.currentRegion = "Forest"
+            elif self.currentRegion == "Forest":
+                self.currentRegion = "Ice"
+            elif self.currentRegion == "Ice":
+                self.currentRegion = "Lava"
+            elif self.currentRegion == "Lava":
+                self.currentRegion = "Desert"
+            # last elif not needed, just for testing -> not sure about the endgame yet
+
+        self.saveGame()
 
     def loadHuds(self):
         # self.abilitiesHud.loadAbilitiesHud()

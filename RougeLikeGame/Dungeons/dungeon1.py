@@ -11,18 +11,18 @@ class Dungeon1:
         self.game = game
         self.init_Dungeon_1()
         self.game.enemiesList = []
-        self.lastSkeletonFighterSpawn = [0 for _ in range(10)] # Let's say I have maximum 10 spawners
+        self.lastSkeletonFighterSpawn = [0 for _ in range(10)]  # Let's say I have maximum 10 spawners
         # lastSkeletonFighterSpawn[spawnerNr] = last time a skeleton was spawned by the spawner Nr
 
-        self.spawners = [[] for _ in range(10)] # List of Lists of Enemies
-        self.spawnerTotalSpawns = [0 for _ in range(10)] # Total number of spawns by the spawner Nr
+        self.spawners = [[] for _ in range(10)]  # List of Lists of Enemies
+        self.spawnerTotalSpawns = [0 for _ in range(10)]  # Total number of spawns by the spawner Nr
 
     def init_Dungeon_1(self):
         self.game.background.fill((118, 59, 54))
         self.game.tilemap = TileMap(100, 100)
         self.game.tilemap.load("Dungeons/dungeon1_map.txt")
 
-        #self.game.player.loadPlayer()
+        # self.game.player.loadPlayer()
 
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
         self.game.player.speed = 3
@@ -33,8 +33,22 @@ class Dungeon1:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.game.gameStateManager.switchGameState("Menu", "Pause Menu Dungeon")
+                if event.key == pygame.K_e:
+                    # Here we check if the player is next to the door, so he can exit the dungeon
+                    for tile in self.game.player.getTilesAround4():
+                        if tile.decorAssetPosition == [10, 3] or tile.decorAssetPosition == [11, 3]:
+                            # Advance the game to the next dungeon as this one is completed
+                            self.game.progressToNextDungeonAndSave()
+                            # Might want to switch to the next dungeon -> for now Lobby makes it.
+                            self.game.gameStateManager.switchGameState("Lobby")
+                            break
+                        if tile.decorAssetPosition == [10, 2] or tile.decorAssetPosition == [11, 2]:
+                            # Return to Lobby and save the progression of player through the dungeon
+                            self.game.player.savePlayer()
+                            self.game.gameStateManager.switchGameState("Lobby")
+                            break
 
-    def spawnSkeletonFighters(self, spawnerNr, x, y, size=4, totalSpawns = 10):
+    def spawnSkeletonFighters(self, spawnerNr, x, y, size=4, totalSpawns=10):
         # This function acts like a Spawner, that constantly spawns enemies
         if self.spawners[spawnerNr].__len__() >= size:
             return
@@ -54,6 +68,7 @@ class Dungeon1:
         for skeleton in self.spawners[spawnerNr]:
             if skeleton not in self.game.enemiesList:
                 self.spawners[spawnerNr].remove(skeleton)
+
     def spawnSkeletonFighter(self, x, y):
         # This function acts like a one time Spawner.
         self.game.enemiesList.append(SkeletonFighter(self.game, [x * TILESIZE, y * TILESIZE]))
@@ -79,8 +94,6 @@ class Dungeon1:
                 continue
             enemy.update()
 
-
-
         # Spawner Zone Number 0
         self.spawnSkeletonFighters(0, 25, 9, 4)
         self.eliminateSkeletonFighters(0)
@@ -104,11 +117,10 @@ class Dungeon1:
         self.spawnSkeletonFighters(5, 4, 30, 2)
         self.eliminateSkeletonFighters(5)
 
-
-
     def renderDungeon1(self):
         self.game.virtual_screen.blit(self.game.background, (0, 0))
-        self.game.tilemap.render(screen= self.game.virtual_screen, tile_pos=self.game.player.getTileCoords() , offset=self.game.render_camera)
+        self.game.tilemap.render(screen=self.game.virtual_screen, tile_pos=self.game.player.getTileCoords(),
+                                 offset=self.game.render_camera)
         self.game.player.render(self.game.virtual_screen, offset=self.game.render_camera)
         for projectile in self.game.projectiles:
             projectile.render(self.game.virtual_screen, offset=self.game.render_camera)

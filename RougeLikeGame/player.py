@@ -72,7 +72,8 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         data['SPEED'] = self.speed
         data['ATTACK SPEED'] = self.attackSpeed
         data['XP'] = self.experience.to_json()
-        data['PROJECTILE'] = {"SPEED": self.projectileSpeed, "DAMAGE": self.projectileDamage, "IMAGE_FILE": self.projectileImageFile}
+        data['PROJECTILE'] = {"SPEED": self.projectileSpeed, "DAMAGE": self.projectileDamage,
+                              "IMAGE_FILE": self.projectileImageFile}
         data['MELEE'] = {"RANGE": self.melee_range, "DAMAGE": self.melee_damage}
         data['COINS'] = self.coins
 
@@ -348,11 +349,11 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
 
         tilesAround = self.getTilesAroundClose()
         for tile in tilesAround:
-            if tile.decorAssetPosition in [[10, 3], [11, 3], [5, 7], [7, 9], [0, 5]]:
+            if tile.decorAssetPosition in [[10, 3], [11, 3], [5, 7], [7, 9], [0, 5], [10, 2], [11, 2]]:
                 position_x = tile.col * TILESIZE + TILESIZE / 2 - interactionButton.get_width() / 2
                 position_y = tile.row * TILESIZE - 12
                 self.game.virtual_screen.blit(interactionButton, (
-                position_x - self.game.render_camera[0], position_y - self.game.render_camera[1]))
+                    position_x - self.game.render_camera[0], position_y - self.game.render_camera[1]))
 
     def update(self, current_time):
 
@@ -397,10 +398,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
                 if event.key == pygame.K_e:
                     tilesAround = self.getTilesAround()
                     for tile in tilesAround:
-                        # Here we check if the player is next to the door, so he can exit the dungeon
-                        if tile.decorAssetPosition == [10, 3] or tile.decorAssetPosition == [11, 3]:
-                            self.game.gameStateManager.switchGameState("Lobby")
-                            break
+
                         # Here we check if the player is next to the chest, so he can open it
                         if tile.decorAssetPosition == [5, 7]:
                             self.coins += 100
