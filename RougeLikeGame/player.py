@@ -347,13 +347,15 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         interactionButton = pygame.image.load("assets/interactionButtonE.png").convert_alpha()
         interactionButton = pygame.transform.scale(interactionButton, (16, 16))
 
-        tilesAround = self.getTilesAroundClose()
-        for tile in tilesAround:
-            if tile.decorAssetPosition in [[10, 3], [11, 3], [5, 7], [7, 9], [0, 5], [10, 2], [11, 2]]:
-                position_x = tile.col * TILESIZE + TILESIZE / 2 - interactionButton.get_width() / 2
-                position_y = tile.row * TILESIZE - 12
-                self.game.virtual_screen.blit(interactionButton, (
-                    position_x - self.game.render_camera[0], position_y - self.game.render_camera[1]))
+
+        if "Dungeon" in self.game.gameStateManager.gameState:
+            tilesAround = self.getTilesAroundClose()
+            for tile in tilesAround:
+                if tile.decorAssetPosition in [[10, 3], [11, 3], [5, 7], [7, 9], [0, 5], [10, 2], [11, 2]]:
+                    position_x = tile.col * TILESIZE + TILESIZE / 2 - interactionButton.get_width() / 2
+                    position_y = tile.row * TILESIZE - 12
+                    self.game.virtual_screen.blit(interactionButton, (
+                        position_x - self.game.render_camera[0], position_y - self.game.render_camera[1]))
 
     def update(self, current_time):
 

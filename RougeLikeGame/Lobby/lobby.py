@@ -10,7 +10,7 @@ class Lobby:
         self.init_Lobby()
 
     def init_Lobby(self):
-        self.game.background.fill((118, 59, 54))
+        self.game.background.fill((73, 71, 81))
         self.game.tilemap = TileMap(75, 35)
         self.game.tilemap.load("Lobby/lobby_map.txt", "lobby")
         # self.game.player.loadPlayer()

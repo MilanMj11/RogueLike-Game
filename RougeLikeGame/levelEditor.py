@@ -26,7 +26,7 @@ class LevelEditor:
 
         pygame.init()
 
-        self.tilemapAssetsScreen = pygame.Surface((576, 528))
+        self.tilemapAssetsScreen = pygame.Surface((576, 528), pygame.SRCALPHA)
         self.virtual_screen = pygame.Surface((1280, 720))
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -205,7 +205,7 @@ class LevelEditor:
                     self.selectedImageAssetPosition = [image_x, image_y]
                     self.selectedImage = self.tilemapAssetsScreen.subsurface((image_x * 48, image_y * 48, 48, 48))
                     self.selectedImage = pygame.transform.scale(self.selectedImage, (TILESIZE, TILESIZE))
-                    self.selectedImage.set_colorkey((0, 0, 0))
+                    # self.selectedImage.set_colorkey((0, 0, 0))
                     self.selectedTileType = "decor"
 
             if event.type == pygame.MOUSEBUTTONUP:
@@ -235,7 +235,7 @@ class LevelEditor:
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH * 2 // 3, SCREEN_HEIGHT * 2 // 3))
         self.screen.blit(scaledScreen, (10, 130))
 
-        assetsImage = pygame.image.load("assets/tilemap/Tilemap/desert_tilemap_packed.png").convert_alpha()
+        assetsImage = pygame.image.load("assets/tilemap/Tilemap/lobby_tilemap_packed.png").convert_alpha()
         assetsImage = pygame.transform.scale(assetsImage, (576, 528))
 
         self.tilemapAssetsScreen.blit(assetsImage, (0, 0))
@@ -243,10 +243,10 @@ class LevelEditor:
 
         pygame.display.flip()
         pygame.display.update()
-        self.screen.fill((0, 0, 0))
+        self.screen.fill((50, 50, 50))
 
     def run(self):
-        self.tilemap.load("level1.txt")
+        self.tilemap.load("level1.txt", "lobby")
 
         while True:
             # self.virtual_screen.fill((100, 100, 100))
