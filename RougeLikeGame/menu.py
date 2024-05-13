@@ -15,7 +15,7 @@ class Menu:
 
     def loadMenu(self):
         if self.type == "Start Menu":
-            self.image = pygame.image.load("assets/menus/StartMenuImageExample.png")
+            self.image = pygame.image.load("assets/menus/startMenu/StartMenuImage.png")
         if self.type == "Pause Menu Dungeon":
             self.image = pygame.image.load("assets/menus/PauseMenuExample.png")
         if self.type == "Pause Menu Lobby":
@@ -57,7 +57,17 @@ class Menu:
                         self.game.gameStateManager.switchGameState("Menu", "Start Menu")
 
     def update(self):
-        pass
+        mouse_pos = pygame.mouse.get_pos()
+        if 48 < int(mouse_pos[0] / SCALING_FACTOR) < 371 and 196 < int(mouse_pos[1] / SCALING_FACTOR) < 274:
+            self.image = pygame.image.load("assets/menus/startMenu/StartMenuImageSelectContinue.png")
+        elif 48 < int(mouse_pos[0] / SCALING_FACTOR) < 371 and 300 < int(mouse_pos[1] / SCALING_FACTOR) < 382:
+            self.image = pygame.image.load("assets/menus/startMenu/StartMenuImageSelectNewGame.png")
+        elif 48 < int(mouse_pos[0] / SCALING_FACTOR) < 371 and 406 < int(mouse_pos[1] / SCALING_FACTOR) < 488:
+            self.image = pygame.image.load("assets/menus/startMenu/StartMenuImageSelectQuit.png")
+        elif 653 < int(mouse_pos[0] / SCALING_FACTOR) < 981 and 406 < int(mouse_pos[1] / SCALING_FACTOR) < 488:
+            self.image = pygame.image.load("assets/menus/startMenu/StartMenuImageSelectSettings.png")
+        else:
+            self.image = pygame.image.load("assets/menus/startMenu/StartMenuImage.png")
 
     def render(self, surf):
         surf.blit(self.image, (0, 0))

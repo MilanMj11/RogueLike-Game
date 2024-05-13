@@ -3,8 +3,8 @@
     "SPEED": 3,
     "ATTACK SPEED": 1,
     "XP": {
-        "xp": 100,
-        "level": 4
+        "xp": 500,
+        "level": 6
     },
     "PROJECTILE": {
         "SPEED": 6,
@@ -15,5 +15,5 @@
         "RANGE": 70,
         "DAMAGE": 15
     },
-    "COINS": 440
+    "COINS": 1500
 }

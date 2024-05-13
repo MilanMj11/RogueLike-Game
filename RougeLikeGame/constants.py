@@ -1,3 +1,5 @@
+import threading
+
 import pygame
 
 RED = (255, 0, 0)
@@ -49,3 +51,5 @@ SKELETON_FIGHTER_DAMAGE = 10
 SKELETON_FIGHTER_ATTACK_SPEED = 1
 SKELETON_FIGHTER_HEALTH = 30
 SKELETON_FIGHTER_SPEED = 1
+
+# exit_flag = threading.Event()

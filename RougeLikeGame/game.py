@@ -29,6 +29,12 @@ class GameController:
         self.background = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.background.fill((0, 0, 0))
 
+        self.loadingImages = [pygame.image.load("assets/menus/LoadingScreenImage.png").convert_alpha(),
+                              pygame.image.load("assets/menus/LoadingScreenImageDot1.png").convert_alpha(),
+                              pygame.image.load("assets/menus/LoadingScreenImageDot2.png").convert_alpha(),
+                              pygame.image.load("assets/menus/LoadingScreenImageDot3.png").convert_alpha()]
+        self.loadingImageInd = 0
+
         self.tilemap = None
         self.player = Player(self, (9 * TILESIZE, 8 * TILESIZE))
         self.projectiles = []
@@ -120,8 +126,10 @@ class GameController:
         self.loadHuds()
 
     def renderLoadingScreen(self):
-        loadingScreenImg = pygame.image.load("assets/menus/LoadingScreenExample.png")
+
+        loadingScreenImg = self.loadingImages[self.loadingImageInd]
         loadingScreenImg = pygame.transform.scale(loadingScreenImg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.loadingImageInd = (self.loadingImageInd + 1) % 4
         self.screen.blit(loadingScreenImg, (0, 0))
         pygame.display.flip()
         # pygame.time.wait(1000)
@@ -160,6 +168,8 @@ class GameController:
 
         # if self.gameStateManager.gameState == "Menu":
         #    self.paused_time = pygame.time.get_ticks()
+        if self.gameStateManager.gameState == "Menu":
+            self.menu.update()
 
         if self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.updateDungeon1()
