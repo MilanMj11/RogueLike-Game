@@ -25,6 +25,13 @@ class Lobby:
         self.decoratorAbilitiesRoom2 = self.decoratorImage.subsurface((0, 527, 18 * 16, 1 * 16))
         self.decoratorAbilitiesRoom2 = pygame.transform.scale(self.decoratorAbilitiesRoom2, (18 * TILESIZE, 1 * TILESIZE))
 
+        # Smith Room
+        self.decoratorSmithRoom = self.decoratorImage.subsurface((16, 368, 17 * 16, 7 * 16))
+        self.decoratorSmithRoom = pygame.transform.scale(self.decoratorSmithRoom, (17 * TILESIZE, 7 * TILESIZE))
+
+        # Dungeon Entrance Room
+        self.decoratorDungeonEntrance = self.decoratorImage.subsurface((16, 720, 17 * 16, 17 * 16))
+        self.decoratorDungeonEntrance = pygame.transform.scale(self.decoratorDungeonEntrance, (17 * TILESIZE, 17 * TILESIZE))
 
         self.init_Lobby()
 
@@ -68,6 +75,15 @@ class Lobby:
         25 * TILESIZE - self.game.render_camera[0], 21 * TILESIZE - self.game.render_camera[1]))
         self.game.virtual_screen.blit(self.decoratorAbilitiesRoom2, (
         24 * TILESIZE - self.game.render_camera[0], 20 * TILESIZE - self.game.render_camera[1]))
+        # ----------------------------------------------------------------------------------------
+        # Smith Room
+        self.game.virtual_screen.blit(self.decoratorSmithRoom, (
+        26 * TILESIZE - self.game.render_camera[0], 3 * TILESIZE - self.game.render_camera[1]))
+        # ----------------------------------------------------------------------------------------
+        # Dungeon Entrance Room
+        self.game.virtual_screen.blit(self.decoratorDungeonEntrance, (
+        47 * TILESIZE - self.game.render_camera[0], 7 * TILESIZE - self.game.render_camera[1]))
+
 
 
     def renderLobby(self):
