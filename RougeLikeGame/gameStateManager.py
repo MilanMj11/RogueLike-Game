@@ -22,11 +22,8 @@ class GameStateManager:
             if menuType == "Pause Menu Lobby":
                 self.game.menu.changeType("Pause Menu Lobby")
 
-        # exit_flag = threading.Event()
-
-        # thread1 = threading.Thread(target=self.game.renderLoadingScreen())
-
         self.game.renderLoadingScreen()
+
 
         if gameState == "Lobby":
             self.game.loadLobby()
@@ -36,4 +33,5 @@ class GameStateManager:
             self.game.loadDungeon2()
         if gameState == "Dungeon 3":
             self.game.loadDungeon3()
+
 

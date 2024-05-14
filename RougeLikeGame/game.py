@@ -29,11 +29,12 @@ class GameController:
         self.background = pygame.Surface((VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
         self.background.fill((0, 0, 0))
 
+        # Threading does not work like I expected it to work ( like in C ) -> might adapt later
         self.loadingImages = [pygame.image.load("assets/menus/LoadingScreenImage.png").convert_alpha(),
                               pygame.image.load("assets/menus/LoadingScreenImageDot1.png").convert_alpha(),
                               pygame.image.load("assets/menus/LoadingScreenImageDot2.png").convert_alpha(),
                               pygame.image.load("assets/menus/LoadingScreenImageDot3.png").convert_alpha()]
-        self.loadingImageInd = 0
+        self.loadingImageInd = 3
 
         self.tilemap = None
         self.player = Player(self, (9 * TILESIZE, 8 * TILESIZE))
