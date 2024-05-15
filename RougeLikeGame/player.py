@@ -318,7 +318,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.position[0] += movement[0]
         playerRect = self.getRect()
         for tile in tilesAround:
-            if tile.type == "wall":
+            if tile.type == "wall" or tile.collidableDecor == True:
                 tileRect = tile.getRect()
                 if playerRect.colliderect(tileRect):
                     # collided on the x axes
@@ -332,7 +332,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.position[1] += movement[1]
         playerRect = self.getRect()
         for tile in tilesAround:
-            if tile.type == "wall":
+            if tile.type == "wall" or tile.collidableDecor == True:
                 tileRect = tile.getRect()
                 if playerRect.colliderect(tileRect):
                     # collided on the y axes

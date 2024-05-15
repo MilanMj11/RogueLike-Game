@@ -343,6 +343,7 @@ class Tile(pygame.sprite.Sprite):
         self.initImage()
         self.decorImage = None
         self.decorAssetPosition = [-1, -1]
+        self.collidableDecor = False
 
     def updateDecorAssetPosition(self, assetPosition, tilemap_type="desert"):
         self.decorAssetPosition = assetPosition
