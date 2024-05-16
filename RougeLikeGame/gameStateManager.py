@@ -22,8 +22,9 @@ class GameStateManager:
             if menuType == "Pause Menu Lobby":
                 self.game.menu.changeType("Pause Menu Lobby")
 
-        self.game.renderLoadingScreen()
-
+        # I don't need a loading screen when accessing the Menu
+        if gameState != "Menu":
+            self.game.renderLoadingScreen()
 
         if gameState == "Lobby":
             self.game.loadLobby()
