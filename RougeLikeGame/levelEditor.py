@@ -168,7 +168,7 @@ class LevelEditor:
 
                 # SAVING THE LEVEL WITH CTRL+S IN NEW TEXT FILE
                 if self.ctrl == True and event.key == pygame.K_s:
-                    self.tilemap.save("level1.txt")
+                    self.tilemap.save("level2.txt")
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LSHIFT:
@@ -235,7 +235,7 @@ class LevelEditor:
         scaledScreen = pygame.transform.scale(self.virtual_screen, (SCREEN_WIDTH * 2 // 3, SCREEN_HEIGHT * 2 // 3))
         self.screen.blit(scaledScreen, (10, 130))
 
-        assetsImage = pygame.image.load("assets/tilemap/Tilemap/lobby_tilemap_packed.png").convert_alpha()
+        assetsImage = pygame.image.load("assets/tilemap/Tilemap/desert_tilemap_packed.png").convert_alpha()
         assetsImage = pygame.transform.scale(assetsImage, (576, 528))
 
         self.tilemapAssetsScreen.blit(assetsImage, (0, 0))
@@ -246,7 +246,8 @@ class LevelEditor:
         self.screen.fill((50, 50, 50))
 
     def run(self):
-        self.tilemap.load("level1.txt", "lobby")
+        # self.tilemap.load("level1.txt", "lobby")
+        self.tilemap.load("level2.txt", "desert")
 
         while True:
             # self.virtual_screen.fill((100, 100, 100))

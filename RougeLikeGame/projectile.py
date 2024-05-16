@@ -16,6 +16,7 @@ class Projectile(pygame.sprite.Sprite):
         self.game = game
         self.image = None
         self.damage = damage
+        self.playerProjectile = True
 
     def getRect(self):
         return pygame.Rect(self.x, self.y, 5, 5)
@@ -49,11 +50,12 @@ class Projectile(pygame.sprite.Sprite):
                     self.game.projectiles.remove(self)
                     return
         # check if projectile touches an enemy
-        for enemy in self.game.enemiesList:
-            if self.getRect().colliderect(enemy.getRect()):
-                enemy.getDamaged(self.damage)
-                self.game.projectiles.remove(self)
-                return
+        if self.playerProjectile == True:
+            for enemy in self.game.enemiesList:
+                if self.getRect().colliderect(enemy.getRect()):
+                    enemy.getDamaged(self.damage)
+                    self.game.projectiles.remove(self)
+                    return
 
     def render(self, screen, offset=(0, 0)):
         if self.image != None:

@@ -6,28 +6,29 @@ from gameStateManager import GameStateManager
 from Enemies.skeletonFighter import SkeletonFighter
 from Enemies.skeletonArcher import SkeletonArcher
 
-class Dungeon1:
+class Dungeon2:
     def __init__(self, game):
         self.game = game
         self.game.enemiesList = []
         self.lastSkeletonFighterSpawn = [0 for _ in range(10)]  # Let's say I have maximum 10 spawners
+        self.lastSkeletonArcherSpawn = [0 for _ in range(10)]
         # lastSkeletonFighterSpawn[spawnerNr] = last time a skeleton was spawned by the spawner Nr
 
         self.spawners = [[] for _ in range(10)]  # List of Lists of Enemies
         self.spawnerTotalSpawns = [0 for _ in range(10)]  # Total number of spawns by the spawner Nr
-        self.init_Dungeon_1()
+        self.init_Dungeon_2()
 
-    def init_Dungeon_1(self):
+    def init_Dungeon_2(self):
         self.game.background.fill((118, 59, 54))
-        self.game.tilemap = TileMap(50, 50)
-        self.game.tilemap.load("Dungeons/dungeon1_map.txt")
+        self.game.tilemap = TileMap(60, 60)
+        self.game.tilemap.load("Dungeons/dungeon2_map.txt")
 
         # self.game.player.loadPlayer()
 
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
         self.game.player.speed = 3
 
-    def checkDungeon1GameEvents(self, eventList):
+    def checkDungeon2GameEvents(self, eventList):
         self.game.player.handleEvents(eventList)
         for event in eventList:
             if event.type == pygame.KEYDOWN:
@@ -40,7 +41,7 @@ class Dungeon1:
                             # Advance the game to the next dungeon as this one is completed
                             self.game.progressToNextDungeonAndSave()
                             # Might want to switch to the next dungeon -> for now Lobby makes it.
-                            self.game.gameStateManager.switchGameState("Dungeon 2")
+                            self.game.gameStateManager.switchGameState("Dungeon 3")
                             break
                         if tile.decorAssetPosition == [10, 2] or tile.decorAssetPosition == [11, 2]:
                             # Return to Lobby and save the progression of player through the dungeon
@@ -73,7 +74,7 @@ class Dungeon1:
         # This function acts like a one time Spawner.
         self.game.enemiesList.append(SkeletonFighter(self.game, [x * TILESIZE, y * TILESIZE]))
 
-    def updateDungeon1(self):
+    def updateDungeon2(self):
 
         self.game.updateCamera()
         self.game.updatePlayer()
@@ -94,31 +95,8 @@ class Dungeon1:
                 continue
             enemy.update()
 
-        # Spawner Zone Number 0
-        self.spawnSkeletonFighters(0, 25, 9, 4)
-        self.eliminateSkeletonFighters(0)
 
-        # Spawner Zone Number 1
-        self.spawnSkeletonFighters(1, 4, 18, 3)
-        self.eliminateSkeletonFighters(1)
-
-        # Spawner Zone Number 2
-        self.spawnSkeletonFighters(2, 39, 22, 2)
-        self.eliminateSkeletonFighters(2)
-
-        # Spawner Zone Number 3
-        self.spawnSkeletonFighters(3, 21, 27, 4)
-        self.eliminateSkeletonFighters(3)
-
-        # Spawner Zone Number 4
-        self.spawnSkeletonFighters(4, 4, 26, 2)
-        self.eliminateSkeletonFighters(4)
-        # Spawner Zone Number 5
-        self.spawnSkeletonFighters(5, 4, 30, 2)
-        self.eliminateSkeletonFighters(5)
-
-
-    def renderDungeon1(self):
+    def renderDungeon2(self):
         self.game.virtual_screen.blit(self.game.background, (0, 0))
         self.game.tilemap.render(screen=self.game.virtual_screen, tile_pos=self.game.player.getTileCoords(),
                                  offset=self.game.render_camera)

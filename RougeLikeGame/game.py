@@ -5,6 +5,7 @@ from tiles import *
 from gameStateManager import GameStateManager
 from Lobby.lobby import Lobby
 from Dungeons.dungeon1 import Dungeon1
+from Dungeons.dungeon2 import Dungeon2
 from Huds.abilities_hud import AbilitiesHud
 from Huds.xp_hud import XPHUD
 from Huds.health_hud import HealthHUD
@@ -58,6 +59,7 @@ class GameController:
         # -> There are 4 regions: Desert, Forest, Ice, Lava
         self.currentRegion = "Desert"
 
+
     def saveGame(self):
         self.player.savePlayer()
 
@@ -89,6 +91,7 @@ class GameController:
 
     def startGame(self):
         pass
+        # self.gameStateManager.switchGameState("Dungeon 1")
         # self.loadGame()
 
         # load the lobby as the first scene
@@ -126,11 +129,16 @@ class GameController:
         self.Dungeon1.init_Dungeon_1()
         self.loadHuds()
 
+    def loadDungeon2(self):
+        self.Dungeon2 = Dungeon2(self)
+        self.Dungeon2.init_Dungeon_2()
+        self.loadHuds()
+
     def renderLoadingScreen(self):
 
         loadingScreenImg = self.loadingImages[self.loadingImageInd]
         loadingScreenImg = pygame.transform.scale(loadingScreenImg, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.loadingImageInd = (self.loadingImageInd + 1) % 4
+        # self.loadingImageInd = (self.loadingImageInd + 1) % 4
         self.screen.blit(loadingScreenImg, (0, 0))
         pygame.display.flip()
         # pygame.time.wait(1000)
@@ -175,7 +183,10 @@ class GameController:
         if self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.updateDungeon1()
 
-        elif self.gameStateManager.gameState == "Lobby":
+        if self.gameStateManager.gameState == "Dungeon 2":
+            self.Dungeon2.updateDungeon2()
+
+        if self.gameStateManager.gameState == "Lobby":
             self.Lobby.updateLobby()
 
         # I don't want the clock to be ticking when in the menu
@@ -202,6 +213,9 @@ class GameController:
         elif self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.checkDungeon1GameEvents(eventList)
 
+        elif self.gameStateManager.gameState == "Dungeon 2":
+            self.Dungeon2.checkDungeon2GameEvents(eventList)
+
         for event in eventList:
             if event.type == pygame.QUIT:
                 self.running = False
@@ -225,6 +239,9 @@ class GameController:
 
         if self.gameStateManager.gameState == "Dungeon 1":
             self.Dungeon1.renderDungeon1()
+
+        if self.gameStateManager.gameState == "Dungeon 2":
+            self.Dungeon2.renderDungeon2()
 
         if self.gameStateManager.gameState == "Lobby":
             self.Lobby.renderLobby()

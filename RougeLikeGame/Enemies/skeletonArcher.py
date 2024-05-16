@@ -4,20 +4,22 @@ import pygame
 import math
 from constants import *
 from Enemies.enemy import Enemy
+from projectile import Projectile
 
-
-class SkeletonFighter(Enemy):
-    def __init__(self, game, pos, health=SKELETON_FIGHTER_HEALTH, size=(40, 40)):
+class SkeletonArcher(Enemy):
+    def __init__(self, game, pos, health=SKELETON_ARCHER_HEALTH, size=(40, 40)):
         super().__init__(game, pos, health, size)
-        self.image = pygame.image.load("assets/skeleton_fighter/skeletonFighter_frame1.png").convert_alpha()
+        self.image = pygame.image.load("assets/skeleton_archer/skeletonArcher_frame1.png").convert_alpha()
         self.image = pygame.transform.flip(self.image, True, False)
         self.image = pygame.transform.scale(self.image, size)
         # self.image.set_colorkey((100, 100, 100))
         self.health = health
-        self.damage = SKELETON_FIGHTER_DAMAGE
-        self.attackSpeed = SKELETON_FIGHTER_ATTACK_SPEED
+        self.damage = SKELETON_ARCHER_DAMAGE
+        self.attackSpeed = SKELETON_ARCHER_ATTACK_SPEED
+        self.arrowSpeed = SKELETON_ARCHER_ARROW_SPEED
+        self.shootingRange = SKELETON_ARCHER_SHOOTING_RANGE
         self.last_attack_time = 0
-        self.speed = SKELETON_FIGHTER_SPEED
+        self.speed = SKELETON_ARCHER_SPEED
         self.last_changeDirection_time = 0
         self.randomDirection = "UP"
         self.xpValue = 50
@@ -45,6 +47,56 @@ class SkeletonFighter(Enemy):
 
         return True
 
+    def move(self, movement):
+        tilesAround = self.getTilesAround()
+
+        # check collision with walls
+        self.position[0] += movement[0]
+        skeletonRect = self.getRect()
+        for tile in tilesAround:
+            if tile.type == "wall":
+                tileRect = tile.getRect()
+                if skeletonRect.colliderect(tileRect):
+                    if movement[0] > 0:
+                        skeletonRect.right = tileRect.left
+                    if movement[0] < 0:
+                        skeletonRect.left = tileRect.right
+
+                    self.position[0] = skeletonRect.x
+
+        self.position[1] += movement[1]
+        skeletonRect = self.getRect()
+        for tile in tilesAround:
+            if tile.type == "wall":
+                tileRect = tile.getRect()
+                if skeletonRect.colliderect(tileRect):
+                    if movement[1] > 0:
+                        skeletonRect.bottom = tileRect.top
+                    if movement[1] < 0:
+                        skeletonRect.top = tileRect.bottom
+
+                    self.position[1] = skeletonRect.y
+
+    def shootArrow(self):
+        playerPos = self.game.player.getRectMiddlePoint()
+
+        dx = playerPos[0] - self.getRectMiddlePoint()[0]
+        dy = playerPos[1] - self.getRectMiddlePoint()[1]
+        magnitude = math.sqrt(dx ** 2 + dy ** 2)
+        direction = [dx / magnitude, dy / magnitude]
+
+
+        arrow = Projectile(self.game, self.getRectMiddlePoint()[0], self.getRectMiddlePoint()[1], direction,
+                           self.arrowSpeed, self.damage)
+        arrow.setImage(pygame.image.load("assets/skeleton_archer/arrow.png"))
+        arrow.playerProjectile = False
+
+        # Rotate the arrow image
+        angle = math.atan2(dx, dy)
+        arrow.image = pygame.transform.rotate(arrow.image, math.degrees(angle - math.pi / 2))
+
+        self.game.projectiles.append(arrow)
+
     def update(self):
 
         super().update()
@@ -57,14 +109,14 @@ class SkeletonFighter(Enemy):
 
         current_time = self.game.current_time
 
-        if distance < 10:
-            # attack the player
+        if distance <= self.shootingRange:
+            # attack the player with projectile
             if current_time - self.last_attack_time >= 1000 / self.attackSpeed:
                 self.last_attack_time = current_time
-                player.health -= self.damage
-        else:
-            # move towards the player if the skeleton sees the player
+                self.shootArrow()
 
+        if distance > self.shootingRange:
+            # move towards the player if the skeleton sees the player
             movement = [0, 0]
 
             if self.seePlayer() == False:
@@ -88,29 +140,4 @@ class SkeletonFighter(Enemy):
             else:
                 self.facing = "LEFT"
 
-            # check collision with walls
-            self.position[0] += movement[0]
-            skeletonRect = self.getRect()
-            for tile in self.getTilesAround():
-                if tile.type == "wall":
-                    tileRect = tile.getRect()
-                    if skeletonRect.colliderect(tileRect):
-                        if movement[0] > 0:
-                            skeletonRect.right = tileRect.left
-                        if movement[0] < 0:
-                            skeletonRect.left = tileRect.right
-
-                        self.position[0] = skeletonRect.x
-
-            self.position[1] += movement[1]
-            skeletonRect = self.getRect()
-            for tile in self.getTilesAround():
-                if tile.type == "wall":
-                    tileRect = tile.getRect()
-                    if skeletonRect.colliderect(tileRect):
-                        if movement[1] > 0:
-                            skeletonRect.bottom = tileRect.top
-                        if movement[1] < 0:
-                            skeletonRect.top = tileRect.bottom
-
-                        self.position[1] = skeletonRect.y
+            self.move(movement)
