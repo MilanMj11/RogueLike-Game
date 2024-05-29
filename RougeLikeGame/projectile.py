@@ -56,6 +56,11 @@ class Projectile(pygame.sprite.Sprite):
                     enemy.getDamaged(self.damage)
                     self.game.projectiles.remove(self)
                     return
+        if self.playerProjectile == False:
+            if self.getRect().colliderect(self.game.player.getRect()):
+                self.game.player.getDamaged(self.damage)
+                self.game.projectiles.remove(self)
+                return
 
     def render(self, screen, offset=(0, 0)):
         if self.image != None:

@@ -61,7 +61,7 @@ class SkeletonFighter(Enemy):
             # attack the player
             if current_time - self.last_attack_time >= 1000 / self.attackSpeed:
                 self.last_attack_time = current_time
-                player.health -= self.damage
+                player.getDamaged(self.damage)
         else:
             # move towards the player if the skeleton sees the player
 

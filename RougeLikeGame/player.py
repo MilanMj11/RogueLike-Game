@@ -118,6 +118,9 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
         self.melee_range = 70
         self.melee_damage = 15
 
+    def getDamaged(self, damage):
+        self.health -= damage
+
     def getTile(self):
         return self.game.tilemap.getTile(int((self.position[1] + self.size[1] / 2) / TILESIZE),
                                          int((self.position[0] + self.size[0] / 2) / TILESIZE))
