@@ -53,7 +53,6 @@ To run this game on your local machine, follow these steps:
 ## Controls
 
 - **WASD or Arrow Keys**: Move the player
-- **Spacebar**: Interact
 - **Left Click**: Use fireball attack
 - **Right Click**: Use sword attack
 - **E**: Interaction with objects/exits
