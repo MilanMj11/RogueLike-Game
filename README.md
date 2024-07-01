@@ -39,7 +39,7 @@ To run this game on your local machine, follow these steps:
     ```
 2. Navigate to the project directory:
     ```sh
-    cd DungeonsMaster
+    cd RogueLike-Game
     ```
 3. Install the required dependencies:
     ```sh
