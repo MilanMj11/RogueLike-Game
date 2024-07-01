@@ -45,7 +45,7 @@ class Lobby:
         # self.game.player.loadPlayer()
 
         self.game.player.position = [14 * TILESIZE, 15 * TILESIZE]
-        self.game.player.speed = 8
+        self.game.player.speed = 4
 
     def setCollidableTiles(self):
         # Personal Room
