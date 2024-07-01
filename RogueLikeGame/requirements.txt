@@ -1,0 +1,10 @@
+altgraph==0.17.4
+packaging==24.1
+pefile==2023.2.7
+pygame==2.5.2
+pygame-ce==2.4.1
+pygame-gui==0.6.9
+pyinstaller==6.8.0
+pyinstaller-hooks-contrib==2024.7
+python-i18n==0.3.9
+pywin32-ctypes==0.2.2
