@@ -363,7 +363,7 @@ class Player(pygame.sprite.Sprite):  # Inherit from pygame.sprite.Sprite
     def update(self, current_time):
 
         ''' For testing , print the player tile coords '''
-        print(self.getTile().row, self.getTile().col)
+        # print(self.getTile().row, self.getTile().col)
 
         # I only want to shoot depending on the self.attackSpeed, every 1 / self.attackSpeed seconds
 

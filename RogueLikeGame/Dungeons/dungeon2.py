@@ -23,7 +23,7 @@ class Dungeon2:
         self.game.tilemap = TileMap(60, 60)
         self.game.tilemap.load("Dungeons/dungeon2_map.txt")
 
-        # self.game.player.loadPlayer()
+        self.game.player.loadPlayer()
 
         self.game.player.position = [4 * TILESIZE, 4 * TILESIZE]
         self.game.player.speed = 3
